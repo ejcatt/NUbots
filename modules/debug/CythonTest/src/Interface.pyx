@@ -15,25 +15,33 @@
 #
 # Copyright 2013 NUBots <nubots@nubots.net>
 
-cdef extern from "<nuclear>" namespace "NUClear::dsl":
-    cdef cppclass Trigger[T]:
-        pass
-    cdef cppclass With[T]:
-        pass
-
-
 cdef extern from "<nuclear>" namespace "NUClear":
     cdef cppclass Reactor:
-        int x
+        pass
+
+# Dirty hack that makes cython think auto is a thing (hehe) allowing us to construct a complex template
+cdef extern from "":
+    cdef cppclass auto:
+        auto trigger[T]()
+        auto also[T]()
+        auto option[T]()
+        void then[T](Reactor*, T)
+        void then[T](Reactor*, string, T)
+
+cdef extern from "PythonReactor.h" namespace "modules::debug::PythonReactor":
+    auto on()
+
+cdef void doSomething(int i, double d):
+    print "Int:", i, "Double:", d
 
 cdef class Interface:
     cdef Reactor* reactor
 
-    cdef build(self, Reactor* reactor):
+    cdef bind(self, Reactor* reactor):
         self.reactor = reactor
-        print(<int>self.reactor)
+        on().trigger[int]().also[double]().then(reactor, doSomething)
 
 cdef public buildCythonTest(Reactor* reactor):
     interface = Interface()
-    interface.build(reactor)
+    interface.bind(reactor)
     return interface

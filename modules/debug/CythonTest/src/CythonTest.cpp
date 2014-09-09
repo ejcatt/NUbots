@@ -35,7 +35,7 @@ namespace debug {
             Py_InitializeEx(0);
         }
 
-        // Initialise this modules things
+        // Initialise this module's things
         PyInit_Interface();
 
         // Build a python reactor interface
@@ -44,7 +44,19 @@ namespace debug {
 
     CythonTest::CythonTest(std::unique_ptr<NUClear::Environment> environment)
     : Reactor(std::move(environment))
-    , interface(initModule(this)) {}
+    , interface(initModule(this)) {
+
+
+
+        on<Trigger<Every<1, std::chrono::seconds>>>([this](const time_t&) {
+            emit(std::make_unique<int>(rand()));
+        });
+
+        on<Trigger<Every<2, std::chrono::seconds>>>([this](const time_t&) {
+            emit(std::make_unique<double>(rand()));
+        });
+
+    }
 
 }
 }
