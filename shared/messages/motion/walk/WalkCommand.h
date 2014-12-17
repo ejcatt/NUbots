@@ -17,34 +17,52 @@
  * Copyright 2013 NUBots <nubots@nubots.net>
  */
 
-#ifndef MESSAGES_MOTION_WALKCOMMAND_H
-#define MESSAGES_MOTION_WALKCOMMAND_H
+#ifndef MESSAGES_MOTION_WALK_WALKCOMMAND_H
+#define MESSAGES_MOTION_WALK_WALKCOMMAND_H
 
 #include <armadillo>
 
 namespace messages {
-    namespace motion {
+namespace motion {
+namespace walk {
 
+    /**
+     * TODO document
+     *
+     * @author Trent Houliston
+     * @author Brendan Annable
+     */
+    struct WalkCommand {
         /**
-         * TODO document
-         *
-         * @author Trent Houliston
-         * @author Brendan Annable
+         * SE2 notation vector: [x: m/s, y: m/s, angle: radians/s]
          */
-        struct WalkCommand {
-            arma::vec2 velocity; // in m/s
-            float rotationalSpeed; // in rads/s
-        };
+        using SE2 = arma::vec3;
 
-        struct WalkStartCommand {
-        };
+        SE2 command;
 
-        struct WalkStopCommand {
-        };
+        auto velocity() -> decltype(command.rows(0,1)) {
+            return command.rows(0,1);
+        }
 
-        struct WalkStopped{
-        };
-    }  // motion
+        auto rotationalSpeed() -> decltype(command[2]) {
+            return command[2];
+        }
+    };
+
+    struct WalkStartCommand {
+    };
+
+    struct WalkStopCommand {
+    };
+
+    struct WalkStarted {
+    };
+
+    struct WalkStopped {
+    };
+
+}  // walk
+}  // motion
 }  // messages
 
-#endif  // MESSAGES_MOTION_WALKCOMMAND_H
+#endif  // MESSAGES_MOTION_WALK_WALKCOMMAND_H

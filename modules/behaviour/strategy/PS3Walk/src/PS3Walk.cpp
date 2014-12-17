@@ -19,7 +19,7 @@
 
 #include "PS3Walk.h"
 #include <nuclear>
-#include "messages/motion/WalkCommand.h"
+#include "messages/motion/walk/WalkCommand.h"
 #include "messages/motion/KickCommand.h"
 #include "messages/behaviour/Action.h"
 
@@ -28,9 +28,9 @@ namespace behaviour {
 namespace strategy {
 
     using messages::motion::KickCommand;
-    using messages::motion::WalkCommand;
-    using messages::motion::WalkStartCommand;
-    using messages::motion::WalkStopCommand;
+    using messages::motion::walk::WalkCommand;
+    using messages::motion::walk::WalkStartCommand;
+    using messages::motion::walk::WalkStopCommand;
     using messages::behaviour::LimbID;
 
     PS3Walk::PS3Walk(std::unique_ptr<NUClear::Environment> environment)
@@ -128,10 +128,10 @@ namespace strategy {
 
             auto rotationalSpeedNorm = rotationalSpeed / std::numeric_limits<short>::max();
 
-            emit(std::make_unique<WalkCommand>(WalkCommand{
-                strafeNorm,
-                rotationalSpeedNorm
-            }));
+            auto walkCommand = std::make_unique<WalkCommand>();
+            walkCommand->velocity() = strafeNorm;
+            walkCommand->rotationalSpeed() = rotationalSpeedNorm;
+            emit(std::move(walkCommand));
         });
     }
 

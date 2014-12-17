@@ -23,15 +23,15 @@
 #include <csignal>
 #include <format.h>
 
-#include "messages/motion/WalkCommand.h"
+#include "messages/motion/walk/WalkCommand.h"
 
 namespace modules {
 namespace behaviour {
 namespace strategy {
 
-    using messages::motion::WalkCommand;
-    using messages::motion::WalkStartCommand;
-    using messages::motion::WalkStopCommand;
+    using messages::motion::walk::WalkCommand;
+    using messages::motion::walk::WalkStartCommand;
+    using messages::motion::walk::WalkStopCommand;
 
     KeyboardWalk::KeyboardWalk(std::unique_ptr<NUClear::Environment> environment)
         : Reactor(std::move(environment)) {
@@ -48,8 +48,7 @@ namespace strategy {
             moving = false;
         });
 
-        emit(std::make_unique<WalkStartCommand>());
-
+        emit<Scope::INITIALIZE>(std::make_unique<WalkStartCommand>());
     }
 
     void KeyboardWalk::run() {
@@ -180,7 +179,10 @@ namespace strategy {
     }
 
     void KeyboardWalk::updateCommand() {
-        emit(std::make_unique<WalkCommand>(WalkCommand{velocity, rotation}));
+        auto walkCommand = std::make_unique<WalkCommand>();
+        walkCommand->velocity() = velocity;
+        walkCommand->rotationalSpeed() = rotation;
+        emit(std::move(walkCommand));
     }
 
     void KeyboardWalk::printStatus() {

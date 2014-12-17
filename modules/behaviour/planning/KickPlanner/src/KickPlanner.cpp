@@ -23,7 +23,7 @@
 #include "utility/math/coordinates.h"
 #include "utility/localisation/transform.h"
 #include "messages/motion/KickCommand.h"
-#include "messages/motion/WalkCommand.h"
+#include "messages/motion/walk/WalkCommand.h"
 #include "messages/localisation/FieldObject.h"
 #include "messages/support/Configuration.h"
 #include "messages/behaviour/Action.h"
@@ -45,10 +45,10 @@ namespace planning {
     using messages::localisation::Ball;
     using messages::localisation::Self;
     using messages::motion::KickCommand;
-    using messages::support::Configuration;
-    using messages::motion::WalkStopCommand;
+    using messages::motion::walk::WalkStopCommand;
     using messages::behaviour::LimbID;
     using messages::behaviour::KickPlan;
+    using messages::support::Configuration;
 
     KickPlanner::KickPlanner(std::unique_ptr<NUClear::Environment> environment)
         : Reactor(std::move(environment)) {

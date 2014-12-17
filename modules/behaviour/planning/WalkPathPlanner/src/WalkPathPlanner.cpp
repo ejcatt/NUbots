@@ -24,7 +24,7 @@
 #include "messages/input/Sensors.h"
 #include "messages/localisation/FieldObject.h"
 #include "messages/vision/VisionObjects.h"
-#include "messages/motion/WalkCommand.h"
+#include "messages/motion/walk/WalkCommand.h"
 #include "messages/motion/KickCommand.h"
 #include "utility/nubugger/NUhelpers.h"
 #include "utility/localisation/transform.h"
@@ -36,11 +36,11 @@ namespace modules {
 
             using messages::support::Configuration;
             using messages::input::Sensors;
-            using messages::motion::WalkCommand;
             using messages::behaviour::WalkTarget;
             using messages::behaviour::WalkApproach;
-            using messages::motion::WalkStartCommand;
-            using messages::motion::WalkStopCommand;
+            using messages::motion::walk::WalkCommand;
+            using messages::motion::walk::WalkStartCommand;
+            using messages::motion::walk::WalkStopCommand;
             using messages::motion::KickFinished;
             using utility::localisation::transform::RobotToWorldTransform;
             using utility::nubugger::graph;
@@ -134,8 +134,8 @@ namespace modules {
                         return;
                      } else if(planType == messages::behaviour::WalkApproach::DirectCommand){
                         std::unique_ptr<WalkCommand> command = std::make_unique<WalkCommand>();
-                        command->velocity = currentTargetPosition;
-                        command->rotationalSpeed = currentTargetHeading[0];
+                        command->velocity() = currentTargetPosition;
+                        command->rotationalSpeed() = currentTargetHeading[0];
                         emit(std::move(command));
                         emit(std::move(std::make_unique<WalkStartCommand>()));
                         return;
@@ -188,10 +188,10 @@ namespace modules {
                                             planType == messages::behaviour::WalkApproach::OmnidirectionalReposition);
                     std::unique_ptr<WalkCommand> command = std::make_unique<WalkCommand>();
                     // std::cerr<<__FILE__<<", "<<__LINE__<<": "<<__func__<<std::endl;
-                    command->velocity = arma::vec({movePlan[0],movePlan[1]});
-                    command->rotationalSpeed = movePlan[2];
+                    command->velocity() = arma::vec({movePlan[0],movePlan[1]});
+                    command->rotationalSpeed() = movePlan[2];
                     // std::cerr<<__FILE__<<", "<<__LINE__<<": "<<__func__<<std::endl;
-                    emit(graph("Walk command:", command->velocity[0], command->velocity[1], command->rotationalSpeed));
+                    emit(graph("Walk command:", command->command));
                     emit(std::move(std::make_unique<WalkStartCommand>()));
                     emit(std::move(command));//XXX: emit here
                     // std::cerr<<__FILE__<<", "<<__LINE__<<": "<<__func__<<std::endl;

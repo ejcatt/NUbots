@@ -1,5 +1,5 @@
 /*
- * This file is part of NUbots Codebase.
+ * This file is part of the NUbots Codebase.
  *
  * The NUbots Codebase is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,30 +17,38 @@
  * Copyright 2013 NUBots <nubots@nubots.net>
  */
 
-#include "WalkTest.h"
-#include "messages/motion/walk/WalkCommand.h"
+#ifndef MESSAGES_MOTION_WALK_FOOTTARGET_H
+#define MESSAGES_MOTION_WALK_FOOTTARGET_H
 
-namespace modules {
-namespace behaviour {
-namespace strategy {
+#include <armadillo>
 
-    using messages::motion::walk::WalkCommand;
-    using messages::motion::walk::WalkStartCommand;
+#include "messages/behaviour/Action.h"
 
-    WalkTest::WalkTest(std::unique_ptr<NUClear::Environment> environment)
-        : Reactor(std::move(environment)) {
+namespace messages {
+namespace motion {
+namespace walk {
 
-        // go forward
-        auto walk = std::make_unique<WalkCommand>();
-        walk->velocity() = arma::vec({1, 0});
-        walk->rotationalSpeed() = 0;
-        emit(std::move(walk));
+    /**
+     * TODO document
+     *
+     * @author Brendan Annable
+     */
+    struct FootTarget {
+        /**
+         * SE2 notation vector: [x, y, angle]
+         */
+        using SE2 = arma::vec3;
 
-        emit(std::make_unique<WalkStartCommand>());
+        messages::behaviour::LimbID leg;
+        SE2 target;
+        NUClear::clock::time_point time;
+    };
 
-    }
+    struct FootTargetComplete {
+    };
 
-}
-}
-}
+}  // walk
+}  // motion
+}  // messages
 
+#endif  // MESSAGES_MOTION_WALK_FOOTTARGET_H

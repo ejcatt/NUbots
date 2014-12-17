@@ -21,7 +21,6 @@
 
 #include "utility/support/YamlArmadillo.h"
 #include "messages/motion/DiveCommand.h"
-#include "messages/motion/WalkCommand.h"
 #include "messages/localisation/FieldObject.h"
 #include "messages/support/Configuration.h"
 #include "messages/behaviour/Action.h"
@@ -36,7 +35,6 @@ namespace planning {
     using messages::localisation::Self;
     using messages::motion::DiveCommand;
     using messages::support::Configuration;
-    using messages::motion::WalkStopCommand;
     using messages::behaviour::LimbID;
     using messages::behaviour::DivePlan;
 

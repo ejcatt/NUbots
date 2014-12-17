@@ -26,10 +26,8 @@
 #include <list>
 
 #include "messages/input/Sensors.h"
-#include "messages/motion/WalkCommand.h"
+#include "messages/motion/walk/WalkCommand.h"
 #include "messages/behaviour/FixedWalkCommand.h"
-
-
 
 namespace modules {
     namespace behaviour {
@@ -43,10 +41,10 @@ namespace modules {
                  */
                 class FixedWalk : public NUClear::Reactor {
                 private:
-                    std::unique_ptr<messages::motion::WalkCommand> getWalkCommand(const messages::behaviour::FixedWalkCommand::WalkSegment& segment, 
-                                                                NUClear::clock::duration t, 
+                    std::unique_ptr<messages::motion::walk::WalkCommand> getWalkCommand(const messages::behaviour::FixedWalkCommand::WalkSegment& segment,
+                                                                NUClear::clock::duration t,
                                                                 const messages::input::Sensors& sensors);
-                    std::list<messages::behaviour::FixedWalkCommand::WalkSegment> walkSegments; 
+                    std::list<messages::behaviour::FixedWalkCommand::WalkSegment> walkSegments;
                     time_t segmentStart;
                     NUClear::clock::duration segmentElapsedTimeBeforeFall;
 

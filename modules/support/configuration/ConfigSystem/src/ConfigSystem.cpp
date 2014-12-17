@@ -71,20 +71,38 @@ namespace modules {
                         std::string fullPath = BASE_CONFIGURATION_PATH + command.configPath;
                         auto& handlers = handler[fullPath];
 
-                        if (utility::file::isDir(fullPath)) {
-                            // Make sure fullPath has a trailing /
-                            if (!utility::strutil::endsWith(fullPath, "/")) {
-                                fullPath += "/";
-                            }
+                        std::string baseDir;
 
-                            // If this is the first type watching this config dir, add a watch
-                            // on the directory
-                            if (handlers.empty()) {
-                                watchDir(fullPath);
+                        if (utility::file::isDir(fullPath)) {
+                            baseDir = fullPath;
+                        }
+                        else {
+                            // Get the dirname for this file
+                            baseDir = fullPath.substr(0, fullPath.rfind('/'));
+                        }
+
+                         // Make sure fullPath has a trailing /
+                        if (!utility::strutil::endsWith(baseDir, "/")) {
+                            baseDir += "/";
+                        }
+
+                        bool found = false;
+                        for (auto& path : watchPath) {
+                            if (path.second == baseDir) {
+                                found = true;
+                                break;
                             }
+                        }
+
+                        if (!found) {
+                            watchDir(baseDir);
+                        }
+
+                        if (utility::file::isDir(fullPath)) {
+
 
                             // Load all the config files in the given directory
-                            loadDir(fullPath, command.initialEmitter);
+                            loadDir(baseDir, command.initialEmitter);
                         }
                         else {
                             auto lastSlashIndex = command.configPath.rfind('/');

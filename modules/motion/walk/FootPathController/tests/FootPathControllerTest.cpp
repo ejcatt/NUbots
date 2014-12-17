@@ -17,30 +17,7 @@
  * Copyright 2013 NUBots <nubots@nubots.net>
  */
 
-#include "WalkTest.h"
-#include "messages/motion/walk/WalkCommand.h"
 
-namespace modules {
-namespace behaviour {
-namespace strategy {
 
-    using messages::motion::walk::WalkCommand;
-    using messages::motion::walk::WalkStartCommand;
-
-    WalkTest::WalkTest(std::unique_ptr<NUClear::Environment> environment)
-        : Reactor(std::move(environment)) {
-
-        // go forward
-        auto walk = std::make_unique<WalkCommand>();
-        walk->velocity() = arma::vec({1, 0});
-        walk->rotationalSpeed() = 0;
-        emit(std::move(walk));
-
-        emit(std::make_unique<WalkStartCommand>());
-
-    }
-
-}
-}
-}
-
+#define CATCH_CONFIG_MAIN  // This tells Catch to provide a main() - only do this in one cpp file
+#include <catch.hpp>

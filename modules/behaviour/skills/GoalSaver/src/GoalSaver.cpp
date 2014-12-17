@@ -21,7 +21,6 @@
 
 #include <armadillo>
 
-#include "messages/motion/WalkCommand.h"
 #include "messages/motion/DiveCommand.h"
 #include "messages/localisation/FieldObject.h"
 #include "messages/support/Configuration.h"
@@ -50,7 +49,6 @@ namespace skills {
     using messages::motion::DiveCommand;
     using messages::motion::DiveFinished;
     using messages::support::Configuration;
-    using messages::motion::WalkStopCommand;
     using messages::behaviour::LimbID;
 
     GoalSaver::GoalSaver(std::unique_ptr<NUClear::Environment> environment)
