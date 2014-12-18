@@ -92,42 +92,47 @@ namespace walk {
             return;
         }
 
-        double phase = (now - beginStepTime).count() / double((endStepTime - beginStepTime).count());
-
-        // cap phase at 1
-        phase = std::min(phase, 1.0);
+        // calculate how far through the step we are, range: [0, 1]
+        double phase = std::min((1.0, now - beginStepTime).count() / double((endStepTime - beginStepTime).count()));
 
         // calculate how far through the step we should go
         auto easing = phaseEasing(phase, phaseStart, phaseEnd);
 
-        arma::mat44 leftFoot = arma::eye(4,4);
-        arma::mat44 rightFoot = arma::eye(4,4);
-        arma::mat44 torso = arma::eye(4,4);
+        // calculate the body positions for the next frame
+        arma::mat44 nextLeftFoot = arma::eye(4,4);
+        arma::mat44 nextRightFoot = arma::eye(4,4);
+        arma::mat44 nextTorso = arma::eye(4,4);
 
-        torso *= yRotationMatrix(bodyTilt, 4);
+        // tilt the torso forward/back
+        nextTorso *= yRotationMatrix(bodyTilt, 4);
 
-        leftFoot *= translationMatrix(arma::vec({footOffset[0], DarwinModel::Leg::HIP_OFFSET_Y + footOffset[1], -bodyHeight}));
-        rightFoot *= translationMatrix(arma::vec({footOffset[0], -DarwinModel::Leg::HIP_OFFSET_Y - footOffset[1], -bodyHeight}));
+        // first make sure each foot is directly below the hip
+        // then make sure they are 'bodyHeight' below the hip
+        // then offset feet by the footOffset to keep feet futher part/closer together
+        nextLeftFoot *= translationMatrix(arma::vec({footOffset[0], DarwinModel::Leg::HIP_OFFSET_Y + footOffset[1], -bodyHeight}));
+        nextRightFoot *= translationMatrix(arma::vec({footOffset[0], -DarwinModel::Leg::HIP_OFFSET_Y - footOffset[1], -bodyHeight}));
 
+        // only apply Z translation to swinging leg
         if (swingLeg == LimbID::LEFT_LEG) {
-            leftFoot *= translationMatrix(arma::vec({0, 0, easing[2] * stepHeight}));
+            nextLeftFoot *= translationMatrix(arma::vec({0, 0, easing[2] * stepHeight}));
         }
         else {
-            rightFoot *= translationMatrix(arma::vec({0, 0, easing[2] * stepHeight}));
+            nextRightFoot *= translationMatrix(arma::vec({0, 0, easing[2] * stepHeight}));
         }
 
-        auto torsoInv = orthonormal44Inverse(torso);
+        // make the feet positions relative to the torso
+        auto nextTorsoInv = orthonormal44Inverse(nextTorso);
+        nextLeftFoot = nextTorsoInv * nextLeftFoot;
+        nextRightFoot = nextTorsoInv * nextRightFoot;
 
-        leftFoot = torsoInv * leftFoot;
-        rightFoot = torsoInv * rightFoot;
+        // use inverse kinematics to get joint positions
+        auto joints = calculateLegJoints<DarwinModel>(nextLeftFoot, nextRightFoot);
 
-        auto joints = calculateLegJoints<DarwinModel>(leftFoot, rightFoot);
-
+        // send joint positions to hardware
         emit(motionLegs(joints));
 
         if (phase == 1) {
-            // target complete
-            phase = 1;
+            // step complete, finish until another FootTarget is emitted
             updateHandle.disable();
             emit(std::make_unique<FootTargetComplete>());
         }
