@@ -26,6 +26,7 @@
 #include "utility/motion/RobotModels.h"
 #include "utility/math/matrix.h"
 #include "utility/support/YamlExpression.h"
+#include "utility/support/YamlArmadillo.h"
 
 namespace modules {
 namespace motion {
@@ -80,6 +81,7 @@ namespace walk {
         stepHeight = config["walk_cycle"]["step_height"].as<double>();
         bodyHeight = config["stance"]["body_height"].as<double>();
         bodyTilt = config["stance"]["body_tilt"].as<Expression>();
+        footOffset = config["stance"]["foot_offset"].as<arma::vec>();
     }
 
     void FootPathController::update(const Sensors& sensors) {
@@ -92,24 +94,20 @@ namespace walk {
 
         double phase = (now - beginStepTime).count() / double((endStepTime - beginStepTime).count());
 
-
+        // cap phase at 1
         phase = std::min(phase, 1.0);
 
+        // calculate how far through the step we should go
         auto easing = phaseEasing(phase, phaseStart, phaseEnd);
 
-        emit(graph("phase", phase));
-        emit(graph("easing", easing));
-
-        // update feet
-        // update torso
         arma::mat44 leftFoot = arma::eye(4,4);
         arma::mat44 rightFoot = arma::eye(4,4);
         arma::mat44 torso = arma::eye(4,4);
 
         torso *= yRotationMatrix(bodyTilt, 4);
 
-        leftFoot *= translationMatrix(arma::vec({0, DarwinModel::Leg::HIP_OFFSET_Y, -bodyHeight}));
-        rightFoot *= translationMatrix(arma::vec({0, -DarwinModel::Leg::HIP_OFFSET_Y, -bodyHeight}));
+        leftFoot *= translationMatrix(arma::vec({footOffset[0], DarwinModel::Leg::HIP_OFFSET_Y + footOffset[1], -bodyHeight}));
+        rightFoot *= translationMatrix(arma::vec({footOffset[0], -DarwinModel::Leg::HIP_OFFSET_Y - footOffset[1], -bodyHeight}));
 
         if (swingLeg == LimbID::LEFT_LEG) {
             leftFoot *= translationMatrix(arma::vec({0, 0, easing[2] * stepHeight}));

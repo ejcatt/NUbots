@@ -47,6 +47,7 @@ namespace walk {
         double bodyHeight;
         double bodyTilt;
         double stepHeight;
+        arma::vec2 footOffset;
         // end walk settings
 
         // start walk state

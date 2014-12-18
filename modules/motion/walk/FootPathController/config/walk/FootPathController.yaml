@@ -1,6 +1,7 @@
 stance:
   body_height: 0.2 # Height of the robot's default stance, range: [0, 0.2195]
   body_tilt: 25 * pi / 180
+  foot_offset: [0, 0]
 walk_cycle:
   step_height: 0.03
   phase_single: [0.1, 0.9]
