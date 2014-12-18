@@ -97,6 +97,8 @@ namespace walk {
 
         on<Trigger<FootTargetComplete>>([this](const FootTargetComplete&) {
             if (state == State::WALKING) {
+                // swap legs
+                swingLeg = swingLeg == LimbID::LEFT_LEG ? LimbID::RIGHT_LEG : LimbID::LEFT_LEG;
                 newStep();
             }
         });
@@ -144,7 +146,7 @@ namespace walk {
         auto now = NUClear::clock::now();
         auto endStepTime = now + stepTime;
         SE2 footTarget = calculateFootTarget(swingLeg);
-        emit(std::make_unique<FootTarget>(FootTarget{swingLeg, footTarget, endStepTime}));
+        emit(std::make_unique<FootTarget>(FootTarget{id, swingLeg, footTarget, endStepTime}));
         beginStepTime = now;
     }
 

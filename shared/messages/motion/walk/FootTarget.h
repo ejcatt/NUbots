@@ -39,6 +39,7 @@ namespace walk {
          */
         using SE2 = arma::vec3;
 
+        size_t controlId;
         messages::behaviour::LimbID leg;
         SE2 target;
         NUClear::clock::time_point time;

@@ -24,6 +24,8 @@
 #include "utility/nubugger/NUhelpers.h"
 #include "utility/motion/InverseKinematics.h"
 #include "utility/motion/RobotModels.h"
+#include "utility/math/matrix.h"
+#include "utility/support/YamlExpression.h"
 
 namespace modules {
 namespace motion {
@@ -38,12 +40,15 @@ namespace walk {
     using messages::support::Configuration;
 
     using utility::nubugger::graph;
-    using utility::motion::kinematics::calculateLegJointsTeamDarwin;
+    using utility::motion::kinematics::calculateLegJoints;
     using utility::motion::kinematics::DarwinModel;
+    using utility::math::matrix::translationMatrix;
+    using utility::math::matrix::yRotationMatrix;
+    using utility::math::matrix::orthonormal44Inverse;
+    using utility::support::Expression;
 
     FootPathController::FootPathController(std::unique_ptr<NUClear::Environment> environment)
-        : Reactor(std::move(environment))
-        , id(size_t(this) * size_t(this) - size_t(this)) {
+        : Reactor(std::move(environment)) {
 
         on<Trigger<Configuration<FootPathController>>>(std::bind(&FootPathController::configure, this, std::placeholders::_1));
 
@@ -61,6 +66,7 @@ namespace walk {
             }
 
             beginStepTime = now;
+            controlId = footTarget.controlId;
             endStepTime = footTarget.time;
             swingLeg = footTarget.leg;
             target = footTarget.target;
@@ -69,9 +75,11 @@ namespace walk {
 
     }
     void FootPathController::configure(const Configuration<FootPathController>& config) {
-        phaseStart = config["phase_single"][0].as<double>();
-        phaseEnd = config["phase_single"][1].as<double>();
-        stepHeight = config["step_height"].as<double>();
+        phaseStart = config["walk_cycle"]["phase_single"][0].as<double>();
+        phaseEnd = config["walk_cycle"]["phase_single"][1].as<double>();
+        stepHeight = config["walk_cycle"]["step_height"].as<double>();
+        bodyHeight = config["stance"]["body_height"].as<double>();
+        bodyTilt = config["stance"]["body_tilt"].as<Expression>();
     }
 
     void FootPathController::update(const Sensors& sensors) {
@@ -96,15 +104,26 @@ namespace walk {
         // update torso
         arma::mat44 leftFoot = arma::eye(4,4);
         arma::mat44 rightFoot = arma::eye(4,4);
+        arma::mat44 torso = arma::eye(4,4);
+
+        torso *= yRotationMatrix(bodyTilt, 4);
+
+        leftFoot *= translationMatrix(arma::vec({0, DarwinModel::Leg::HIP_OFFSET_Y, -bodyHeight}));
+        rightFoot *= translationMatrix(arma::vec({0, -DarwinModel::Leg::HIP_OFFSET_Y, -bodyHeight}));
 
         if (swingLeg == LimbID::LEFT_LEG) {
-            leftFoot(2,3) = stepHeight * easing[2];
+            leftFoot *= translationMatrix(arma::vec({0, 0, easing[2] * stepHeight}));
         }
         else {
-            rightFoot(2,3) = stepHeight * easing[2];
+            rightFoot *= translationMatrix(arma::vec({0, 0, easing[2] * stepHeight}));
         }
 
-        auto joints = calculateLegJointsTeamDarwin<DarwinModel>(leftFoot, rightFoot);
+        auto torsoInv = orthonormal44Inverse(torso);
+
+        leftFoot = torsoInv * leftFoot;
+        rightFoot = torsoInv * rightFoot;
+
+        auto joints = calculateLegJoints<DarwinModel>(leftFoot, rightFoot);
 
         emit(motionLegs(joints));
 
@@ -124,7 +143,7 @@ namespace walk {
         NUClear::clock::time_point time = NUClear::clock::now() + std::chrono::nanoseconds(std::nano::den/UPDATE_FREQUENCY);
 
         for (auto& joint : joints) {
-            waypoints->push_back({id, time, joint.first, joint.second, 30}); // TODO: config gains
+            waypoints->push_back({controlId, time, joint.first, joint.second, 30}); // TODO: config gains
         }
 
         return std::move(waypoints);

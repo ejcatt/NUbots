@@ -38,6 +38,8 @@ namespace kinematics {
 
     /*! @brief Calculates the leg joints for a given input ankle position.
             The robot coordinate system has origin a distance DISTANCE_FROM_BODY_TO_HIP_JOINT above the midpoint of the hips.
+            The foot has an origin of the ankle.
+
             Robot coordinate system:
                         x is out of the front of the robot
                         y is left, from right shoulder to left
@@ -185,6 +187,14 @@ namespace kinematics {
         }
 
         return positions;
+    }
+
+    template <typename RobotKinematicModel>
+    std::vector<std::pair<messages::input::ServoID, float>> calculateLegJoints(arma::mat44 leftTarget, arma::mat44 rightTarget) {
+        auto joints = calculateLegJoints<RobotKinematicModel>(leftTarget, Side(true));
+        auto joints2 = calculateLegJoints<RobotKinematicModel>(rightTarget, Side(false));
+        joints.insert(joints.end(), joints2.begin(), joints2.end());
+        return joints;
     }
 
     template <typename RobotKinematicModel>

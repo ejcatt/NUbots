@@ -31,18 +31,20 @@ namespace utility{
                 RIGHT = false
             };
 
-            class DarwinModel{
+            class DarwinModel {
             public:
 
                 class Leg {
                 public:
-                    static constexpr float LENGTH_BETWEEN_LEGS = 0.074;
-                    static constexpr float HIP_OFFSET_Z = 0.034;
                     static constexpr float HIP_OFFSET_X = 0.00; //DARWIN SAYS THIS IS 0.008
+                    static constexpr float HIP_OFFSET_Y = 0.037;
+                    static constexpr float HIP_OFFSET_Z = 0.034;
                     static constexpr float UPPER_LEG_LENGTH = 0.093;
                     static constexpr float LOWER_LEG_LENGTH = 0.093;
                     static constexpr float FOOT_HEIGHT = 0.0335;
 
+                    static constexpr float LENGTH_BETWEEN_LEGS = HIP_OFFSET_Y * 2;
+                    static constexpr float ANKLE_TO_ORIGIN_LENGTH = UPPER_LEG_LENGTH + LOWER_LEG_LENGTH; // assumes legs straight
 
                     static constexpr int LEFT_TO_RIGHT_HIP_YAW =       -1;
                     static constexpr int LEFT_TO_RIGHT_HIP_ROLL =      -1;

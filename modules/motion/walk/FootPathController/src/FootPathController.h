@@ -41,16 +41,16 @@ namespace walk {
 
         ReactionHandle updateHandle;
 
-        /// Subsumption ID key to access motors
-        const size_t id;
-
         // start walk settings
         double phaseStart;
         double phaseEnd;
+        double bodyHeight;
+        double bodyTilt;
         double stepHeight;
         // end walk settings
 
         // start walk state
+        size_t controlId;
         messages::behaviour::LimbID swingLeg;
         NUClear::clock::time_point beginStepTime;
         NUClear::clock::time_point endStepTime;
