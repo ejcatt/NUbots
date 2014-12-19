@@ -93,7 +93,7 @@ namespace walk {
         }
 
         // calculate how far through the step we are, range: [0, 1]
-        double phase = std::min((1.0, now - beginStepTime).count() / double((endStepTime - beginStepTime).count()));
+        double phase = std::min(1.0, (now - beginStepTime).count() / double((endStepTime - beginStepTime).count()));
 
         // calculate how far through the step we should go
         auto easing = phaseEasing(phase, phaseStart, phaseEnd);
