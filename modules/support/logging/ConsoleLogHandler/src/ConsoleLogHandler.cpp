@@ -25,10 +25,13 @@ namespace modules {
     namespace support {
         namespace logging {
 
+            using NUClear::message::ReactionStatistics;
+            using NUClear::message::LogMessage;
+
             using utility::strutil::Colour;
 
             ConsoleLogHandler::ConsoleLogHandler(std::unique_ptr<NUClear::Environment> environment) : Reactor(std::move(environment)) {
-                on<Trigger<NUClear::ReactionStatistics>>().then([this](const NUClear::ReactionStatistics & stats) {
+                on<Trigger<ReactionStatistics>>().then([this](const ReactionStatistics& stats) {
                     if (stats.exception) {
                         try {
                             std::rethrow_exception(stats.exception);
@@ -46,7 +49,7 @@ namespace modules {
                 });
 
 
-                on<Trigger<NUClear::LogMessage>, Options<Sync<ConsoleLogHandler>>>().then([this](const NUClear::LogMessage& message) {
+                on<Trigger<LogMessage>>().then([this](const LogMessage& message) {
 
                     // Output the level
                     switch(message.level) {
