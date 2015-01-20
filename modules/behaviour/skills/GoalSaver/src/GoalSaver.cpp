@@ -58,19 +58,19 @@ namespace skills {
         , id(size_t(this) * size_t(this) - size_t(this)) {
 
         // do a little configurating
-        on<Trigger<Configuration<GoalSaver>>>([this] (const Configuration<GoalSaver>& config){
+        on<Trigger<Configuration<GoalSaver>>>().then([this] (const Configuration<GoalSaver>& config){
             DIVE_PRIORITY = config["DIVE_PRIORITY"].as<float>();
             EXECUTION_PRIORITY = config["EXECUTION_PRIORITY"].as<float>();
         });
 
-        on<Trigger<DiveCommand>>([this] (const DiveCommand& diveCommand) {
+        on<Trigger<DiveCommand>>().then([this] (const DiveCommand& diveCommand) {
 
             this->diveCommand = diveCommand;
             updatePriority(DIVE_PRIORITY);
 
         });
 
-        on<Trigger<ExecuteDive>>([this] (const ExecuteDive&) {
+        on<Trigger<ExecuteDive>>().then([this] (const ExecuteDive&) {
             arma::vec direction = diveCommand.direction;
 
             int quadrant = getDirectionalQuadrant(direction[0], direction[1]);
@@ -88,7 +88,7 @@ namespace skills {
 
         });
 
-        on<Trigger<FinishDive>>([this] (const FinishDive&) {
+        on<Trigger<FinishDive>>().then([this] (const FinishDive&) {
             emit(std::move(std::make_unique<DiveFinished>()));
             updatePriority(0);
         });

@@ -67,11 +67,11 @@ namespace modules {
 
         LUTClassifier::LUTClassifier(std::unique_ptr<NUClear::Environment> environment) : Reactor(std::move(environment)), quex(new QuexClassifier) {
 
-            on<Trigger<Configuration<LUTLocation>>>([this](const Configuration<LUTLocation>& config) {
+            on<Trigger<Configuration<LUTLocation>>>().then([this](const Configuration<LUTLocation>& config) {
                 emit(std::make_unique<LookUpTable>(config.config.as<LookUpTable>()));
             });
 
-            on<Trigger<SaveLookUpTable>, With<LookUpTable>>([this](const SaveLookUpTable&, const LookUpTable& lut) {
+            on<Trigger<SaveLookUpTable>, With<LookUpTable>>().then([this](const SaveLookUpTable&, const LookUpTable& lut) {
                 emit(std::make_unique<SaveConfiguration>(SaveConfiguration{ LUTLocation::CONFIGURATION_PATH, YAML::Node(lut) }));
             });
 
@@ -102,10 +102,10 @@ namespace modules {
             };
 
             // Trigger the same function when either update
-            on<Trigger<CameraParameters>, With<Configuration<LUTClassifier>>>(setParams);
-            on<With<CameraParameters>, Trigger<Configuration<LUTClassifier>>>(setParams);
+            on<Trigger<CameraParameters>, With<Configuration<LUTClassifier>>>().then(setParams);
+            on<With<CameraParameters>, Trigger<Configuration<LUTClassifier>>>().then(setParams);
 
-            on<Trigger<Raw<Image>>, With<LookUpTable>, With<Raw<Sensors>>, Options<Single>>("Classify Image", [this](
+            on<Trigger<Raw<Image>>, With<LookUpTable>, With<Raw<Sensors>>, Options<Single>>().then("Classify Image", [this](
                 const std::shared_ptr<const Image>& rawImage, const LookUpTable& lut, const std::shared_ptr<const Sensors>& sensors) {
 
                 const auto& image = *rawImage;

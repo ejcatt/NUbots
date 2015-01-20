@@ -99,11 +99,11 @@ namespace motion {
             }
         }));
 
-        updateHandle = on<Trigger<Every<UPDATE_FREQUENCY, Per<std::chrono::seconds>>>, With<Sensors>, Options<Single, Priority<NUClear::HIGH>>>([this](const time_t&, const Sensors& sensors) {
+        updateHandle = on<Trigger<Every<UPDATE_FREQUENCY, Per<std::chrono::seconds>>>, With<Sensors>, Options<Single, Priority<NUClear::HIGH>>>().then([this](const time_t&, const Sensors& sensors) {
             update(sensors);
         }).disable();
 
-        on<Trigger<WalkCommand>>([this](const WalkCommand& walkCommand) {
+        on<Trigger<WalkCommand>>().then([this](const WalkCommand& walkCommand) {
             auto velocity = walkCommand.command;
 
             velocity.x()     *= velocity.x()     > 0 ? velocityLimits(0,1) : -velocityLimits(0,0);
@@ -113,25 +113,25 @@ namespace motion {
             setVelocity(velocity);
         });
 
-        on<Trigger<WalkStartCommand>>([this](const WalkStartCommand&) {
+        on<Trigger<WalkStartCommand>>().then([this](const WalkStartCommand&) {
             start();
             emit(std::make_unique<ActionPriorites>(ActionPriorites { id, { 25, 10 }})); // TODO: config
         });
 
-        on<Trigger<WalkStopCommand>>([this](const WalkStopCommand&) {
+        on<Trigger<WalkStopCommand>>().then([this](const WalkStopCommand&) {
             requestStop();
         });
 
-        on<Trigger<Configuration<WalkEngine>>>([this](const Configuration<WalkEngine>& config) {
+        on<Trigger<Configuration<WalkEngine>>>().then([this](const Configuration<WalkEngine>& config) {
             configure(config.config);
         });
 
-        on<Trigger<WalkOptimiserCommand> >([this](const WalkOptimiserCommand& command) {
+        on<Trigger<WalkOptimiserCommand> >().then([this](const WalkOptimiserCommand& command) {
             configure(command.walkConfig);
             emit(std::make_unique<WalkConfigSaved>());
         });
 
-        on<Trigger<Startup>>([this](const Startup&) {
+        on<Trigger<Startup>>().then([this](const Startup&) {
             //generateAndSaveStandScript();
             //reset();
             //state = State::LAST_STEP;

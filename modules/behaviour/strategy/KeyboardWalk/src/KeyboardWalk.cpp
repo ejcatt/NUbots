@@ -40,11 +40,11 @@ namespace strategy {
 
         powerplant.addServiceTask(NUClear::threading::ThreadWorker::ServiceTask(std::bind(std::mem_fn(&KeyboardWalk::run), this), std::bind(std::mem_fn(&KeyboardWalk::kill), this)));
 
-        on<Trigger<WalkStartCommand>>([this](const WalkStartCommand&) {
+        on<Trigger<WalkStartCommand>>().then([this](const WalkStartCommand&) {
             moving = true;
         });
 
-        on<Trigger<WalkStopCommand>>([this](const WalkStopCommand&) {
+        on<Trigger<WalkStopCommand>>().then([this](const WalkStopCommand&) {
             moving = false;
         });
 
@@ -68,7 +68,7 @@ namespace strategy {
         // Hide the cursor
         //curs_set(false);
 
-        on<Trigger<NUClear::LogMessage>, Options<Sync<KeyboardWalk>>>([this](const NUClear::LogMessage& message) {
+        on<Trigger<NUClear::LogMessage>, Options<Sync<KeyboardWalk>>>().then([this](const NUClear::LogMessage& message) {
             printw((message.message + "\n").c_str());
             refresh();
         });

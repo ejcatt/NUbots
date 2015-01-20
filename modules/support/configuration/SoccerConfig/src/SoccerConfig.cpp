@@ -84,7 +84,7 @@ namespace configuration {
     SoccerConfig::SoccerConfig(std::unique_ptr<NUClear::Environment> environment)
         : Reactor(std::move(environment)) {
 
-        on<Trigger<Configuration<FieldDescriptionConfig>>>(
+        on<Trigger<Configuration<FieldDescriptionConfig>>>().then(
             "FieldDescriptionConfig Update",
             [this](const Configuration<FieldDescriptionConfig>& config) {
             auto fd = std::make_unique<messages::support::FieldDescription>(LoadFieldDescription(config));

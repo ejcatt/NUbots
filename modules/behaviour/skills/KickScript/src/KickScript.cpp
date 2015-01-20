@@ -48,12 +48,12 @@ namespace skills {
         , id(size_t(this) * size_t(this) - size_t(this)) {
 
         // do a little configurating
-        on<Trigger<Configuration<KickScript>>>([this] (const Configuration<KickScript>& config){
+        on<Trigger<Configuration<KickScript>>>().then([this] (const Configuration<KickScript>& config){
             KICK_PRIORITY = config["KICK_PRIORITY"].as<float>();
             EXECUTION_PRIORITY = config["EXECUTION_PRIORITY"].as<float>();
         });
 
-        on<Trigger<KickCommand>>([this] (const KickCommand& kickCommand) {
+        on<Trigger<KickCommand>>().then([this] (const KickCommand& kickCommand) {
             auto direction = kickCommand.direction;
             auto leg = kickCommand.leg;
 
@@ -83,7 +83,7 @@ namespace skills {
             }
         });
 
-        on<Trigger<ExecuteKick>>([this] (const ExecuteKick&) {
+        on<Trigger<ExecuteKick>>().then([this] (const ExecuteKick&) {
             auto direction = kickCommand.direction;
             auto leg = kickCommand.leg;
 
@@ -111,7 +111,7 @@ namespace skills {
 
         });
 
-        on<Trigger<FinishKick>>([this] (const FinishKick&) {
+        on<Trigger<FinishKick>>().then([this] (const FinishKick&) {
             emit(std::move(std::make_unique<KickFinished>()));
             updatePriority(0);
         });

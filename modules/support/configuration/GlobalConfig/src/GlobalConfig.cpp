@@ -31,7 +31,7 @@ namespace configuration {
         : Reactor(std::move(environment)) {
 
 
-        on<Trigger<Configuration<GlobalConfig>>>([this] (const Configuration<GlobalConfig>& config) {
+        on<Trigger<Configuration<GlobalConfig>>>().then([this] (const Configuration<GlobalConfig>& config) {
             emit(std::make_unique<messages::support::GlobalConfig>(messages::support::GlobalConfig{
                 config["playerId"].as<uint>(),
                 config["teamId"].as<uint>()

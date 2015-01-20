@@ -91,7 +91,7 @@ namespace modules {
             , orientationFilter(arma::vec({0, 0, 0, -9.6525e-01, -2.4957e-02, 1.8088e-01, 1.8696e-01}))
             , velocityFilter(arma::vec3({0,0,0})) {
 
-                on<Trigger<Configuration<SensorFilter>>>([this](const Configuration<SensorFilter>& file){
+                on<Trigger<Configuration<SensorFilter>>>().then([this](const Configuration<SensorFilter>& file){
                     DEFAULT_NOISE_GAIN = file.config["DEFAULT_NOISE_GAIN"].as<double>();
                     HIGH_NOISE_THRESHOLD = file.config["HIGH_NOISE_THRESHOLD"].as<double>();
                     HIGH_NOISE_GAIN = file.config["HIGH_NOISE_GAIN"].as<double>();
@@ -113,7 +113,7 @@ namespace modules {
                     odometry_covariance_factor = file.config["odometry_covariance_factor"].as<double>();
                 });
 
-                on<Trigger<Last<20, DarwinSensors>>>([this](const LastList<DarwinSensors>& sensors) {
+                on<Trigger<Last<20, DarwinSensors>>>().then([this](const LastList<DarwinSensors>& sensors) {
 
                     int leftCount = 0;
                     int middleCount = 0;
@@ -161,7 +161,7 @@ namespace modules {
 
                 on< Trigger<DarwinSensors>
                   , With<Optional<Sensors>>
-                  , Options<Single>>([this](const DarwinSensors& input,
+                  , Options<Single>>().then([this](const DarwinSensors& input,
                                             const std::shared_ptr<const Sensors>& previousSensors) {
 
                     auto sensors = std::make_unique<Sensors>();

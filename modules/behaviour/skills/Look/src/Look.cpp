@@ -44,7 +44,7 @@ namespace modules {
             Look::Look(std::unique_ptr<NUClear::Environment> environment) : Reactor(std::move(environment)), id(size_t(this) * size_t(this) - size_t(this)) {
 
                 //do a little configurating
-                on<Trigger<Configuration<Look>>>([this] (const Configuration<Look>& file){
+                on<Trigger<Configuration<Look>>>().then([this] (const Configuration<Look>& file){
                     lastPanEnd = NUClear::clock::now();
                     //load fast and slow panspeed settings
 
@@ -60,14 +60,14 @@ namespace modules {
                     screenPadding = file.config["screenPadding"].as<double>();
                 });
 
-                on<Trigger<ExecuteLook>>([this] (const ExecuteLook&) {
+                on<Trigger<ExecuteLook>>().then([this] (const ExecuteLook&) {
                     //we are active!
                     lastPanEnd = NUClear::clock::now() - std::chrono::seconds(1);
 
                 });
 
                 //look at a single visible object using the angular offsets in the image
-                on<Trigger<LookAtAngle>, With<Sensors>>([this] (const LookAtAngle& look, const Sensors& sensors) {
+                on<Trigger<LookAtAngle>, With<Sensors>>().then([this] (const LookAtAngle& look, const Sensors& sensors) {
                     // std::cerr<<__FILE__<<", "<<__LINE__<<": "<<__func__<<std::endl;
                     lastPanEnd = NUClear::clock::now();
                     //speeds should take into account the angle delta
@@ -95,7 +95,7 @@ namespace modules {
                 });
 
                 //look at multiple visible objects using the angular offsets in the image
-                on<Trigger<std::vector<LookAtAngle>>, With<Sensors>>([this] (const std::vector<LookAtAngle>& look, const Sensors& sensors) {
+                on<Trigger<std::vector<LookAtAngle>>, With<Sensors>>().then([this] (const std::vector<LookAtAngle>& look, const Sensors& sensors) {
                     // std::cerr<<__FILE__<<", "<<__LINE__<<": "<<__func__<<std::endl;
                     lastPanEnd = NUClear::clock::now();
                     double pitchLow = 0.0,
@@ -153,7 +153,7 @@ namespace modules {
 
 
                 //look at multiple visible objects using the angular offsets in the image
-                on<Trigger<std::vector<LookAtPosition>>, With<Sensors>>([this] (const std::vector<LookAtPosition>& look, const Sensors& sensors) {
+                on<Trigger<std::vector<LookAtPosition>>, With<Sensors>>().then([this] (const std::vector<LookAtPosition>& look, const Sensors& sensors) {
                     // std::cerr<<__FILE__<<", "<<__LINE__<<": "<<__func__<<std::endl;
 
                     if (NUClear::clock::now() >= lastPanEnd) {
@@ -185,7 +185,7 @@ namespace modules {
                 });
 
                 /*
-                on<Trigger<LookAtPoint>, With<Sensors>>([this] (const LookAtPoint& look, const Sensors& sensors) {
+                on<Trigger<LookAtPoint>, With<Sensors>>().then([this] (const LookAtPoint& look, const Sensors& sensors) {
                     //speeds should take into account the angle delta
                     double distance = look.pitch*look.pitch+look.yaw*look.yaw;
                     panTime = distance/fastSpeed;
@@ -204,7 +204,7 @@ namespace modules {
                     emit(std::move(waypoints));
                 });
 
-                on<Trigger<std::vector<LookAtPoint>>, With<Sensors>>([this] (const std::vector<LookAtPoint>& look, const Sensors& sensors) {
+                on<Trigger<std::vector<LookAtPoint>>, With<Sensors>>().then([this] (const std::vector<LookAtPoint>& look, const Sensors& sensors) {
                     //speeds should take into account the angle delta
                     double distance = look.pitch*look.pitch+look.yaw*look.yaw;
                     panTime = distance/fastSpeed;

@@ -91,18 +91,18 @@ namespace localisation {
     MockRobot::MockRobot(std::unique_ptr<NUClear::Environment> environment)
         : Reactor(std::move(environment)) {
 
-        on<Trigger<FieldDescription>>("FieldDescription Update", [this](const FieldDescription& desc) {
+        on<Trigger<FieldDescription>>().then("FieldDescription Update", [this](const FieldDescription& desc) {
             field_description_ = std::make_shared<FieldDescription>(desc);
         });
 
-        on<Trigger<Configuration<MockRobotConfig>>>(
+        on<Trigger<Configuration<MockRobotConfig>>>().then(
             "MockRobotConfig Update",
             [this](const Configuration<MockRobotConfig>& config) {
             UpdateConfiguration(config);
         });
 
         // Update robot position
-        on<Trigger<Every<10, std::chrono::milliseconds>>>("Mock Robot motion", [this](const time_t&) {
+        on<Trigger<Every<10, std::chrono::milliseconds>>>().then("Mock Robot motion", [this](const time_t&) {
             if (!cfg_.simulate_robot_movement) {
                 robot_velocity_ = arma::vec2({ 0, 0 });
                 return;
@@ -132,7 +132,7 @@ namespace localisation {
         });
 
         // Update ball position
-        on<Trigger<Every<10, std::chrono::milliseconds>>>("Mock Ball motion", [this](const time_t&){
+        on<Trigger<Every<10, std::chrono::milliseconds>>>().then("Mock Ball motion", [this](const time_t&){
             if (!cfg_.simulate_ball_movement) {
                 ball_velocity_ = { 0, 0 };
                 return;
@@ -154,7 +154,7 @@ namespace localisation {
 
         // Simulate Vision
         on<Trigger<Every<30, Per<std::chrono::seconds>>>,
-           Options<Sync<MockRobot>>>("Mock Vision Simulation", [this](const time_t&) {
+           Options<Sync<MockRobot>>>().then("Mock Vision Simulation", [this](const time_t&) {
             if (!cfg_.simulate_vision)
                 return;
 
@@ -263,7 +263,7 @@ namespace localisation {
         // Emit robot to NUbugger
         on<Trigger<Every<100, std::chrono::milliseconds>>,
            With<Mock<std::vector<messages::localisation::Self>>>,
-           Options<Sync<MockRobot>>>("NUbugger Output",
+           Options<Sync<MockRobot>>>().then("NUbugger Output",
             [this](const time_t&,
                    const Mock<std::vector<messages::localisation::Self>>& mock_robots) {
             auto& robots = mock_robots.data;
@@ -301,7 +301,7 @@ namespace localisation {
         on<Trigger<Every<100, std::chrono::milliseconds>>,
            With<Mock<messages::localisation::Ball>>,
            With<Mock<std::vector<messages::localisation::Self>>>,
-           Options<Sync<MockRobot>>>("NUbugger Output",
+           Options<Sync<MockRobot>>>().then("NUbugger Output",
             [this](const time_t&,
                    const Mock<messages::localisation::Ball>& mock_ball,
                    const Mock<std::vector<messages::localisation::Self>>& mock_robots) {

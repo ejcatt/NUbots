@@ -143,12 +143,12 @@ namespace darwin {
 
     HardwareIO::HardwareIO(std::unique_ptr<NUClear::Environment> environment) : Reactor(std::move(environment)), darwin("/dev/ttyUSB0") {
 
-        on<Trigger<Configuration<Darwin::UART>>>([this](const Configuration<Darwin::UART>& config){
+        on<Trigger<Configuration<Darwin::UART>>>().then([this](const Configuration<Darwin::UART>& config){
             darwin.setConfig(config);
         });
 
         // This trigger gets the sensor data from the CM730
-        on<Trigger<Every<60, Per<std::chrono::seconds>>>, Options<Single>>([this](const time_t&) {
+        on<Trigger<Every<60, Per<std::chrono::seconds>>>, Options<Single>>().then([this](const time_t&) {
 
             // Our final sensor output
             auto sensors = std::make_unique<DarwinSensors>();
@@ -219,7 +219,7 @@ namespace darwin {
         });
 
         // This trigger writes the servo positions to the hardware
-        on<Trigger<std::vector<ServoTarget>>, With<DarwinSensors>>([this](const std::vector<ServoTarget>& commands, const DarwinSensors& sensors) {
+        on<Trigger<std::vector<ServoTarget>>, With<DarwinSensors>>().then([this](const std::vector<ServoTarget>& commands, const DarwinSensors& sensors) {
 
             // Loop through each of our commands
             for (const auto& command : commands) {
@@ -269,7 +269,7 @@ namespace darwin {
             }
         });
 
-        on<Trigger<ServoTarget>>([this](const ServoTarget command) {
+        on<Trigger<ServoTarget>>().then([this](const ServoTarget command) {
             auto commandList = std::make_unique<std::vector<ServoTarget>>();
             commandList->push_back(command);
 
@@ -278,7 +278,7 @@ namespace darwin {
         });
 
         // If we get a HeadLED command then write it
-        on<Trigger<DarwinSensors::HeadLED>>([this](const DarwinSensors::HeadLED& led) {
+        on<Trigger<DarwinSensors::HeadLED>>().then([this](const DarwinSensors::HeadLED& led) {
             // Update our internal state
             cm730State.headLED = led;
 
@@ -286,7 +286,7 @@ namespace darwin {
         });
 
         // If we get a EyeLED command then write it
-        on<Trigger<DarwinSensors::EyeLED>>([this](const DarwinSensors::EyeLED& led) {
+        on<Trigger<DarwinSensors::EyeLED>>().then([this](const DarwinSensors::EyeLED& led) {
             // Update our internal state
             cm730State.eyeLED = led;
 

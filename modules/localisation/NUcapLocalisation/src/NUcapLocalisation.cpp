@@ -40,12 +40,12 @@ namespace localisation {
 
     NUcapLocalisation::NUcapLocalisation(std::unique_ptr<NUClear::Environment> environment) : Reactor(std::move(environment)) {
 
-        on<Trigger<Configuration<NUcapLocalisation>>>([this](const Configuration<NUcapLocalisation>& config){
+        on<Trigger<Configuration<NUcapLocalisation>>>().then([this](const Configuration<NUcapLocalisation>& config){
             robot_id = config["robot_id"].as<int>();
             NUClear::log("NUcapLocalisation::robot_id = ", robot_id, ". If incorrect change config/NUcapLocalisation.yaml");
         });
 
-        on<Trigger<Network<MotionCapture>>, With<Sensors> >([this](const Network<MotionCapture>& net, const Sensors&) {
+        on<Trigger<Network<MotionCapture>>, With<Sensors> >().then([this](const Network<MotionCapture>& net, const Sensors&) {
 
             auto& mocap = net.data;
             for (auto& rigidBody : mocap->rigid_bodies()) {

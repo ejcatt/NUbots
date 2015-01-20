@@ -47,7 +47,7 @@ namespace modules {
             using utility::motion::kinematics::calculateHeadJoints;
 
             KinematicsDebug::KinematicsDebug(std::unique_ptr<NUClear::Environment> environment) : Reactor(std::move(environment)) {
-                    on< Trigger<Configuration<InverseKinematicsRequest>> >([this](const Configuration<InverseKinematicsRequest>& request) {
+                    on< Trigger<Configuration<InverseKinematicsRequest>> >().then([this](const Configuration<InverseKinematicsRequest>& request) {
                         return;
                         Transform3D target;
                         target = target.rotateY(request.config["yAngle"].as<double>());
@@ -105,7 +105,7 @@ namespace modules {
                         emit(std::move(waypoints));
                     });
 
-                    on< Trigger<Configuration<LegKinematicsNULLTest>> >([this](const Configuration<LegKinematicsNULLTest>& request) {
+                    on< Trigger<Configuration<LegKinematicsNULLTest>> >().then([this](const Configuration<LegKinematicsNULLTest>& request) {
                         int iterations = 1;
                         int numberOfFails = 0;
                         float ERROR_THRESHOLD = request.config["ERROR_THRESHOLD"].as<float>();
@@ -201,7 +201,7 @@ namespace modules {
 
                     });
 
-                    on< Trigger<Configuration<HeadKinematicsNULLTest>> >([this](const Configuration<HeadKinematicsNULLTest>& request) {
+                    on< Trigger<Configuration<HeadKinematicsNULLTest>> >().then([this](const Configuration<HeadKinematicsNULLTest>& request) {
                         int iterations = 1;
                         int numberOfFails = 0;
                         float ERROR_THRESHOLD = request.config["ERROR_THRESHOLD"].as<float>();

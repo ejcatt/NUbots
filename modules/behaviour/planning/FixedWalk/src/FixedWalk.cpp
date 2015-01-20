@@ -40,22 +40,22 @@ namespace planning {
 
 
     FixedWalk::FixedWalk(std::unique_ptr<NUClear::Environment> environment) : Reactor(std::move(environment)), active(false){
-        // on<Trigger<Configuration<FixedWalk>>>([this] (const Configuration<FixedWalk>& file){
+        // on<Trigger<Configuration<FixedWalk>>>().then([this] (const Configuration<FixedWalk>& file){
         // });
 
-        on<Trigger<ExecuteGetup>>("FixedWalk::Getup", [this](const ExecuteGetup&){
+        on<Trigger<ExecuteGetup>>().then("FixedWalk::Getup", [this](const ExecuteGetup&){
             //record fall time
             segmentElapsedTimeBeforeFall = NUClear::clock::now() - segmentStart;
             fallen = true;
         });
 
-        on<Trigger<KillGetup>>("FixedWalk::Getup Finished", [this](const KillGetup&){
+        on<Trigger<KillGetup>>().then("FixedWalk::Getup Finished", [this](const KillGetup&){
             //getup finished
             segmentStart = NUClear::clock::now() - segmentElapsedTimeBeforeFall;
             fallen = false;
         });
 
-        on< Trigger< Every<30, Per<std::chrono::seconds>>> , Options<Sync<FixedWalk>>, With<Sensors>>("Fixed Walk Manager", [this]( const time_t& t, const Sensors& sensors){
+        on< Trigger< Every<30, Per<std::chrono::seconds>>> , Options<Sync<FixedWalk>>, With<Sensors>>().then("Fixed Walk Manager", [this]( const time_t& t, const Sensors& sensors){
             if(active && t > segmentStart + walkSegments.front().duration && !fallen){
                 //Move to next segment
                 segmentStart += walkSegments.front().duration;
@@ -75,14 +75,14 @@ namespace planning {
         	}
         });
 
-        on<Trigger<CancelFixedWalk>, Options<Sync<FixedWalk>> >([this](const CancelFixedWalk&){
+        on<Trigger<CancelFixedWalk>, Options<Sync<FixedWalk>> >().then([this](const CancelFixedWalk&){
             emit(std::make_unique<WalkStopCommand>());
             // emit(std::make_unique<WalkCommand>());
             active = false;
             walkSegments.clear();
         });
 
-        on<Trigger<WalkStopped>, Options<Sync<FixedWalk>> >([this](const WalkStopped&){
+        on<Trigger<WalkStopped>, Options<Sync<FixedWalk>> >().then([this](const WalkStopped&){
             if(!active){
                 emit(std::make_unique<FixedWalkFinished>());
             } else {
@@ -90,7 +90,7 @@ namespace planning {
             }
         });
 
-		on<Trigger<FixedWalkCommand>, Options<Sync<FixedWalk>>, With<Sensors> >([this](const FixedWalkCommand& command, const Sensors& sensors){
+		on<Trigger<FixedWalkCommand>, Options<Sync<FixedWalk>>, With<Sensors> >().then([this](const FixedWalkCommand& command, const Sensors& sensors){
             if(!active && !command.segments.empty()){
                 active = true;
     			segmentStart = NUClear::clock::now();

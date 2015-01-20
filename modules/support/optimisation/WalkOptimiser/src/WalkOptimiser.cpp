@@ -48,7 +48,7 @@ namespace modules {
                 : Reactor(std::move(environment)),
                 initialConfig("Jerry", YAML::Node()) {
 
-                on<Trigger<Configuration<WalkOptimiser>>>([this](const Configuration<WalkOptimiser>& config){
+                on<Trigger<Configuration<WalkOptimiser>>>().then([this](const Configuration<WalkOptimiser>& config){
 
                     std::cerr << "Starting up walk optimiser" << std::endl;
 
@@ -82,7 +82,7 @@ namespace modules {
                     emit(std::make_unique<OptimiseWalkCommand>());
                 });
 
-                on<Trigger<OptimiseWalkCommand>, With<Configuration<WalkOptimiserCommand>>, Options<Sync<WalkOptimiser>>>("Optimise Walk", [this](const OptimiseWalkCommand&, const Configuration<WalkOptimiserCommand>& walkConfig){
+                on<Trigger<OptimiseWalkCommand>, With<Configuration<WalkOptimiserCommand>>, Options<Sync<WalkOptimiser>>>().then("Optimise Walk", [this](const OptimiseWalkCommand&, const Configuration<WalkOptimiserCommand>& walkConfig){
 
                     //Start optimisation
                     std::cerr << "Optimiser command" << std::endl;
@@ -103,7 +103,7 @@ namespace modules {
 
                 });
 
-                on<Trigger<WalkConfigSaved>, Options<Sync<WalkOptimiser>>>([this](const WalkConfigSaved&){
+                on<Trigger<WalkConfigSaved>, Options<Sync<WalkOptimiser>>>().then([this](const WalkConfigSaved&){
                     std::this_thread::sleep_for(std::chrono::milliseconds(configuration_wait_milliseconds));
                     //Start a walk routine
                     auto command = std::make_unique<FixedWalkCommand>(walk_command);
@@ -111,18 +111,18 @@ namespace modules {
                 });
 
 
-                on< Trigger< Every<25, Per<std::chrono::seconds>> >, With<Sensors>, Options<Sync<WalkOptimiser>> >("Walk Data Manager", [this](const time_t&, const Sensors& sensors){
+                on< Trigger< Every<25, Per<std::chrono::seconds>> >, With<Sensors>, Options<Sync<WalkOptimiser>> >().then("Walk Data Manager", [this](const time_t&, const Sensors& sensors){
                     //Record data
                     data.update(sensors);
                 });
 
-                on<Trigger<ExecuteGetup>>("Getup Recording", [this](const ExecuteGetup&){
+                on<Trigger<ExecuteGetup>>().then("Getup Recording", [this](const ExecuteGetup&){
                     //Record the robot falling over
                     data.recordGetup();
 
                 });
 
-                on<Trigger<KillGetup>>("Getup Recording", [this](const KillGetup&){
+                on<Trigger<KillGetup>>().then("Getup Recording", [this](const KillGetup&){
                     data.getupFinished();
                     // //If this set of parameters is very bad, stop the trial and send cancel fixed walk command
                     if(data.numberOfGetups >= getup_cancel_trial_threshold){
@@ -130,7 +130,7 @@ namespace modules {
                     }
                 });
 
-                on<Trigger<FixedWalkFinished>, Options<Sync<WalkOptimiser>> > ("Walk Routine Finised", [this](const FixedWalkFinished&){
+                on<Trigger<FixedWalkFinished>, Options<Sync<WalkOptimiser>> > ().then("Walk Routine Finised", [this](const FixedWalkFinished&){
                     //Get and reset data
                     fitnesses[currentSample] = data.popFitness();
                     std::cerr << "Sample Done! Fitness: " << fitnesses[currentSample] << std::endl;
@@ -144,7 +144,7 @@ namespace modules {
                     }
                 });
 
-                on<Trigger<OptimisationComplete>, Options<Sync<WalkOptimiser>>>("Record Results", [this]( const OptimisationComplete&){
+                on<Trigger<OptimisationComplete>, Options<Sync<WalkOptimiser>>>().then("Record Results", [this]( const OptimisationComplete&){
                     //Combine samples
                     arma::vec result = utility::math::optimisation::PGA::updateEstimate(samples, fitnesses);
 
@@ -154,7 +154,7 @@ namespace modules {
                 });
 
                 //TODO network
-                // on<Trigger<Network<WalkOptimiserCommandParameters>>>("Add Sample",[this](const Configuration<WalkOptimiserCommand>& walkConfig)){
+                // on<Trigger<Network<WalkOptimiserCommandParameters>>>().then("Add Sample",[this](const Configuration<WalkOptimiserCommand>& walkConfig)){
                 //     //samples.push_back(getState()));
                     // fitnesses.resize(number_of_samples);
                 //

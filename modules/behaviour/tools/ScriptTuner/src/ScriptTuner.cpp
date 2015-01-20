@@ -53,7 +53,7 @@ namespace modules {
                 script.frames.emplace_back();
                 script.frames.back().duration = std::chrono::milliseconds(defaultDuration);
 
-                on<Trigger<CommandLineArguments>>([this](const std::vector<std::string>& args) {
+                on<Trigger<CommandLineArguments>>().then([this](const std::vector<std::string>& args) {
                     if(args.size() == 2) {
                         scriptPath = args[1];
 
@@ -70,7 +70,7 @@ namespace modules {
                     }
                 });
 
-                on<Trigger<LockServo>, With<messages::platform::darwin::DarwinSensors>>([this](const LockServo&, const messages::platform::darwin::DarwinSensors& sensors) {
+                on<Trigger<LockServo>, With<messages::platform::darwin::DarwinSensors>>().then([this](const LockServo&, const messages::platform::darwin::DarwinSensors& sensors) {
 
                     auto id = selection < 2 ? 18 + selection : selection - 2;
 
@@ -696,7 +696,7 @@ namespace modules {
                     refreshView();
                 }
             }//end mirrorScript()
-            
+
             //change scriptPath and then call saveScript to Save As
             void ScriptTuner::saveScriptAs() {
                 move(5,2);
@@ -709,7 +709,7 @@ namespace modules {
                         mvprintw(7,2, "Press Enter to overwrite, or X to return to script.");
                         switch(getch()) {
                             case '\n':
-                            case KEY_ENTER: 
+                            case KEY_ENTER:
                                 move(5,2);
                                 curs_set(false);
                                 print = false;
@@ -731,7 +731,7 @@ namespace modules {
                     saveScript();
                     move(5,2);
                     curs_set(false);
-                    refreshView(); 
+                    refreshView();
                 }
             }
 

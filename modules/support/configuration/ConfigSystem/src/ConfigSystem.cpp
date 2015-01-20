@@ -46,7 +46,7 @@ namespace modules {
                 // Watch our base directory
                 watchDir(BASE_CONFIGURATION_PATH);
 
-                on<Trigger<messages::support::SaveConfiguration>>([this](const messages::support::SaveConfiguration& saveConfig) {
+                on<Trigger<messages::support::SaveConfiguration>>().then([this](const messages::support::SaveConfiguration& saveConfig) {
 
                     std::string tempName = "config/" + saveConfig.path + ".tmp";
                     std::string finalName = "config/" + saveConfig.path;
@@ -61,7 +61,7 @@ namespace modules {
                     NUClear::log("Saved config:", saveConfig.path);
                 });
 
-                on<Trigger<messages::support::ConfigurationConfiguration>>([this](const messages::support::ConfigurationConfiguration& command) {
+                on<Trigger<messages::support::ConfigurationConfiguration>>().then([this](const messages::support::ConfigurationConfiguration& command) {
 
                     // Check if we have already loaded this type's handler
                     if (loaded.find(command.requester) == std::end(loaded)) {

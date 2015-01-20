@@ -42,7 +42,7 @@ namespace modules {
 
         AudioFileInput::AudioFileInput(std::unique_ptr<NUClear::Environment> environment) : Reactor(std::move(environment)) {
             // Load our file name configuration.
-            on<Trigger<messages::support::Configuration<AudioFileConfiguration>>>([this](const messages::support::Configuration<AudioFileConfiguration>& configfile) {
+            on<Trigger<messages::support::Configuration<AudioFileConfiguration>>>().then([this](const messages::support::Configuration<AudioFileConfiguration>& configfile) {
                     std::string filePath = configfile.config["file"];
                     NUClear::log<NUClear::DEBUG>("Loading sound file: ", filePath);
                     m->file = SndfileHandle(filePath.c_str());
@@ -57,7 +57,7 @@ namespace modules {
                     emit<Scope::INITIALIZE>(std::move(settings));
             });
 
-            on<Trigger<Every<(NUClear::clock::period::den / CHUNKS_PER_SECOND), NUClear::clock::duration>>>([this](const time_t&) {
+            on<Trigger<Every<().then(NUClear::clock::period::den / CHUNKS_PER_SECOND), NUClear::clock::duration>>>([this](const time_t&) {
                 auto& file = m->file;
 
                 auto chunk = std::make_unique<messages::input::SoundChunk>();

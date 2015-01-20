@@ -51,7 +51,7 @@ namespace support {
 
         powerplant.addServiceTask(NUClear::threading::ThreadWorker::ServiceTask(std::bind(std::mem_fn(&NUbugger::run), this), std::bind(std::mem_fn(&NUbugger::kill), this)));
 
-        on<Trigger<Configuration<NUbugger>>>([this] (const Configuration<NUbugger>& config) {
+        on<Trigger<Configuration<NUbugger>>>().then([this] (const Configuration<NUbugger>& config) {
 
             // TODO if network disables then we should unbind
 
@@ -153,7 +153,7 @@ namespace support {
             }
         });
 
-        on<Trigger<Every<1, std::chrono::seconds>>, Options<Single, Priority<NUClear::LOW>>>([this] (const time_t&) {
+        on<Trigger<Every<1, std::chrono::seconds>>, Options<Single, Priority<NUClear::LOW>>>().then([this] (const time_t&) {
             Message message;
             message.set_type(Message::PING);
             message.set_filter_id(0);
@@ -171,7 +171,7 @@ namespace support {
         provideVision();
 
         // When we shutdown, close our publisher and our file if we have one
-        on<Trigger<Shutdown>>([this](const Shutdown&) {
+        on<Trigger<Shutdown>>().then([this](const Shutdown&) {
             pub.close();
 
             // Close the file if it exists

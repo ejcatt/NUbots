@@ -43,7 +43,7 @@ namespace planning {
 
     LookAtBall::LookAtBall(std::unique_ptr<NUClear::Environment> environment) : Reactor(std::move(environment)) {
 
-        on<Trigger<Configuration<HeadBehaviourConfig>>>([this](const Configuration<HeadBehaviourConfig>& config) {
+        on<Trigger<Configuration<HeadBehaviourConfig>>>().then([this](const Configuration<HeadBehaviourConfig>& config) {
             BALL_SEARCH_TIMEOUT_MILLISECONDS = config["BALL_SEARCH_TIMEOUT_MILLISECONDS"].as<float>();
             SCAN_YAW = config["SCAN_YAW"].as<arma::vec>();
             SCAN_PITCH = config["SCAN_PITCH"].as<arma::vec>();
@@ -53,7 +53,7 @@ namespace planning {
         lookAtReactionHandler = on<Trigger<std::vector<Ball>>,
             With<std::vector<Goal>>,
             With<Optional<messages::localisation::Ball>>,
-            With<Sensors> >([this]
+            With<Sensors> >().then([this]
             (const std::vector<Ball>& balls,
              const std::vector<Goal>& goals,
              const std::shared_ptr<const messages::localisation::Ball>&,
@@ -128,7 +128,7 @@ namespace planning {
 
         });
 
-        on<Trigger<Look::PanSelection>>([this](const Look::PanSelection& panSelection) {
+        on<Trigger<Look::PanSelection>>().then([this](const Look::PanSelection& panSelection) {
             lookAtReactionHandler.enable(!panSelection.lookAtGoalInsteadOfBall);
         });
     }

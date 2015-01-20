@@ -33,7 +33,7 @@ namespace modules {
             espeak_SetParameter(espeakVOLUME, 100, 0);
             espeak_SetParameter(espeakCAPITALS, 6, 0);
 
-            on<Trigger<messages::output::Say>, Options<Sync<eSpeak>>>([](const messages::output::Say& message) {
+            on<Trigger<messages::output::Say>, Options<Sync<eSpeak>>>().then([](const messages::output::Say& message) {
                 // Wait to finish the current message (if any)
                 // By waiting here this reaction can finish and return to the pool
                 // if it does not have to wait for another say message
@@ -51,7 +51,7 @@ namespace modules {
                         );
             });
 
-            on<Trigger<Shutdown>>([](const Shutdown&) {
+            on<Trigger<Shutdown>>().then([](const Shutdown&) {
                 // Stop espeak
                 espeak_Terminate();
             });

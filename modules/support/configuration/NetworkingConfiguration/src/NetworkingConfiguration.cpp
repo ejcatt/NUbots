@@ -28,7 +28,7 @@ namespace modules {
 
             NetworkingConfiguration::NetworkingConfiguration(std::unique_ptr<NUClear::Environment> environment) : Reactor(std::move(environment)) {
 
-                on<Trigger<Configuration<NetworkingConfiguration>>>([this]
+                on<Trigger<Configuration<NetworkingConfiguration>>>().then([this]
                         (const Configuration<NetworkingConfiguration>& config) {
                     auto c = std::make_unique<NUClear::extensions::NetworkingConfiguration>();
 

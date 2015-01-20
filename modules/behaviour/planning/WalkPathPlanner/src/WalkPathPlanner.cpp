@@ -64,7 +64,7 @@ namespace modules {
                     std::cerr<<__FILE__<<", "<<__LINE__<<": "<<__func__<<std::endl;
 
                 //do a little configurating
-                on<Trigger<Configuration<WalkPathPlanner>>>([this] (const Configuration<WalkPathPlanner>& file){
+                on<Trigger<Configuration<WalkPathPlanner>>>().then([this] (const Configuration<WalkPathPlanner>& file){
                     std::cerr<<__FILE__<<", "<<__LINE__<<": "<<__func__<<std::endl;
 
                     turnSpeed = file.config["turnSpeed"].as<float>();
@@ -112,7 +112,7 @@ namespace modules {
                 });
 
 
-                on<Trigger<KickFinished>>([this] (const KickFinished&) {
+                on<Trigger<KickFinished>>().then([this] (const KickFinished&) {
                     emit(std::move(std::make_unique<WalkStartCommand>()));
                 });
 
@@ -122,7 +122,7 @@ namespace modules {
                     With<Optional<std::vector<messages::vision::Obstacle>>>,
                     With<std::vector<messages::vision::Ball>>,
                     Options<Sync<WalkPathPlanner>>
-                   >([this] (
+                   >().then([this] (
                      const time_t&,
                      const LocalisationBall& ball,
                      const std::vector<Self>& selfs,
@@ -197,7 +197,7 @@ namespace modules {
 
                 });
 
-                on<Trigger<messages::behaviour::WalkStrategy>, Options<Sync<WalkPathPlanner>>>([this] (const messages::behaviour::WalkStrategy& cmd) {
+                on<Trigger<messages::behaviour::WalkStrategy>, Options<Sync<WalkPathPlanner>>>().then([this] (const messages::behaviour::WalkStrategy& cmd) {
                     //reset hysteresis variables when a command changes
                     turning = 0;
                     distanceIncrement = 3;

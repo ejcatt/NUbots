@@ -70,7 +70,7 @@ namespace strategy {
 
     SoccerStrategy::SoccerStrategy(std::unique_ptr<NUClear::Environment> environment) : Reactor(std::move(environment)) {
 
-        on<Trigger<Configuration<SoccerStrategy>>>([this](const Configuration<SoccerStrategy>& config) {
+        on<Trigger<Configuration<SoccerStrategy>>>().then([this](const Configuration<SoccerStrategy>& config) {
             BALL_CLOSE_DISTANCE = config["ball_close_distance"].as<double>();
             BALL_LAST_SEEN_MAX_TIME = durationFromSeconds(config["ball_last_seen_max_time"].as<double>());
             GOAL_LAST_SEEN_MAX_TIME = durationFromSeconds(config["goal_last_seen_max_time"].as<double>());
@@ -97,13 +97,13 @@ namespace strategy {
         emit(std::make_unique<KickPlan>(KickPlan{{4.5, 0}}));
 
         // For checking last seen times
-        on<Trigger<std::vector<VisionBall>>>([this] (const std::vector<VisionBall>& balls) {
+        on<Trigger<std::vector<VisionBall>>>().then([this] (const std::vector<VisionBall>& balls) {
             if(!balls.empty()) {
                 ballLastSeen = NUClear::clock::now();
             }
         });
 
-        on<Trigger<std::vector<VisionGoal>>>([this] (const std::vector<VisionGoal>& goals) {
+        on<Trigger<std::vector<VisionGoal>>>().then([this] (const std::vector<VisionGoal>& goals) {
             if(!goals.empty()) {
                 goalLastSeen = NUClear::clock::now();
             }
@@ -111,30 +111,30 @@ namespace strategy {
 
         // TODO: remove this horrible code
         // Check to see if we are currently in the process of getting up.
-        on<Trigger<ExecuteGetup>>([this](const ExecuteGetup&) {
+        on<Trigger<ExecuteGetup>>().then([this](const ExecuteGetup&) {
             isGettingUp = true;
         });
 
         // Check to see if we have finished getting up.
-        on<Trigger<KillGetup>>([this](const KillGetup&) {
+        on<Trigger<KillGetup>>().then([this](const KillGetup&) {
             isGettingUp = false;
         });
 
         // Check to see if we are currently in the process of diving.
-        on<Trigger<DiveCommand>>([this](const DiveCommand&) {
+        on<Trigger<DiveCommand>>().then([this](const DiveCommand&) {
             isDiving = true;
         });
 
         // Check to see if we have finished diving.
-        on<Trigger<DiveFinished>>([this](const DiveFinished&) {
+        on<Trigger<DiveFinished>>().then([this](const DiveFinished&) {
             isDiving = false;
         });
 
-        on<Trigger<SelfPenalisation>>([this](const SelfPenalisation&) {
+        on<Trigger<SelfPenalisation>>().then([this](const SelfPenalisation&) {
             selfPenalised = true;
         });
 
-        on<Trigger<SelfUnpenalisation>>([this](const SelfUnpenalisation&) {
+        on<Trigger<SelfUnpenalisation>>().then([this](const SelfUnpenalisation&) {
             selfPenalised = false;
             // TODO: only do this once put down
             unpenalisedLocalisationReset();
@@ -142,7 +142,7 @@ namespace strategy {
 
         // Main Loop
         on<Trigger<Every<30, Per<std::chrono::seconds>>>, With<GameState>, // TODO: ensure a reasonable state is emitted even if gamecontroller is not running
-            Options<Single>>([this](const time_t&, const GameState& gameState) {
+            Options<Single>>().then([this](const time_t&, const GameState& gameState) {
 
 
             try {

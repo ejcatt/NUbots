@@ -52,7 +52,7 @@ namespace planning {
     LookPlanner::LookPlanner(std::unique_ptr<NUClear::Environment> environment)
         : Reactor(std::move(environment)) {
 
-        on<Trigger<Configuration<LookPlanner>>>([this] (const Configuration<LookPlanner>& config){
+        on<Trigger<Configuration<LookPlanner>>>().then([this] (const Configuration<LookPlanner>& config){
             //pan speeds
             VISUAL_TRACKING_TIMEOUT = config["visual_tracking_timeout"].as<double>();
             LOCALISATION_TRACKING_TIMEOUT = config["localisation_tracking_timeout"].as<double>();
@@ -70,7 +70,7 @@ namespace planning {
             With<LookStrategy>,
             With<FieldDescription>,
             Options<Sync<LookPlanner>>>
-            ([this] (const LastList<std::vector<VisionBall>>& v,
+            ().then([this] (const LastList<std::vector<VisionBall>>& v,
                     const std::shared_ptr<const LocalisationBall>& l,
                     const std::shared_ptr<const std::vector<Self>>& selfs,
                     const Sensors& sensors,
@@ -148,7 +148,7 @@ namespace planning {
             With<LookStrategy>,
             With<FieldDescription>,
             Options<Sync<LookPlanner>>>
-            ([this] (const LastList<std::vector<VisionGoal>>& v,
+            ().then([this] (const LastList<std::vector<VisionGoal>>& v,
                      const std::shared_ptr<const std::vector<Self>>& selfs,
                      const Sensors& sensors,
                      const LookStrategy& strat,

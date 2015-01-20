@@ -38,7 +38,7 @@ namespace modules {
         LinuxCamera::LinuxCamera(std::unique_ptr<NUClear::Environment> environment) : Reactor(std::move(environment)) {
 
             // This trigger gets us as close as we can to the frame rate as possible (as high resolution as we can)
-            on<Trigger<Every<NUClear::clock::period::den / V4L2Camera::FRAMERATE, NUClear::clock::duration>>, Options<Single>>("Read Camera", [this](const time_t&) {
+            on<Trigger<Every<NUClear::clock::period::den / V4L2Camera::FRAMERATE, NUClear::clock::duration>>, Options<Single>>().then("Read Camera", [this](const time_t&) {
 
                 // If the camera is ready, get an image and emit it
                 if (camera.isStreaming()) {
@@ -47,11 +47,11 @@ namespace modules {
             });
 
             // When we shutdown, we must tell our camera class to close (stop streaming)
-            on<Trigger<Shutdown>>([this](const Shutdown&) {
+            on<Trigger<Shutdown>>().then([this](const Shutdown&) {
                 camera.closeCamera();
             });
 
-            on<Trigger<Configuration<LinuxCamera>>>([this](const Configuration<LinuxCamera>& config) {
+            on<Trigger<Configuration<LinuxCamera>>>().then([this](const Configuration<LinuxCamera>& config) {
 
                 auto cameraParameters = std::make_unique<CameraParameters>();
 
@@ -98,7 +98,7 @@ namespace modules {
                 }
             });
 
-            on<Trigger<Every<1, std::chrono::seconds>>, With<Configuration<LinuxCamera>>>("Camera Setting Applicator", [this] (const time_t&, const Configuration<LinuxCamera>& config) {
+            on<Trigger<Every<1, std::chrono::seconds>>, With<Configuration<LinuxCamera>>>().then("Camera Setting Applicator", [this] (const time_t&, const Configuration<LinuxCamera>& config) {
                 if(camera.isStreaming()) {
                     // Set all other camera settings
                     for(auto& setting : camera.getSettings()) {

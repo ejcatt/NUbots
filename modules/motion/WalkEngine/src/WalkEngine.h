@@ -52,7 +52,7 @@ namespace motion {
         static constexpr size_t UPDATE_FREQUENCY = 60;
 
         static constexpr const char* CONFIGURATION_PATH = "WalkEngine.yaml";
-        explicit WalkEngine(std::unique_ptr<NUClear::Environment> environment);
+        explicit WalkEngine().then(std::unique_ptr<NUClear::Environment> environment);
     private:
         using LimbID         = messages::behaviour::LimbID;
         using ServoCommand   = messages::behaviour::ServoCommand;

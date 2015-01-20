@@ -140,7 +140,7 @@ namespace fakedarwin {
             servo.temperature = 0;
         }
 
-        on<Trigger<Every<60, Per<std::chrono::seconds>>>, Options<Single>>([this](const time_t&) {
+        on<Trigger<Every<60, Per<std::chrono::seconds>>>, Options<Single>>().then([this](const time_t&) {
 
             for (int i = 0; i < 20; ++i) {
 
@@ -185,7 +185,7 @@ namespace fakedarwin {
         });*/
 
         // This trigger writes the servo positions to the hardware
-        on<Trigger<std::vector<ServoTarget>>>([this](const std::vector<ServoTarget>& commands) {
+        on<Trigger<std::vector<ServoTarget>>>().then([this](const std::vector<ServoTarget>& commands) {
             for (auto& command : commands) {
 
                 // Calculate our moving speed
@@ -210,7 +210,7 @@ namespace fakedarwin {
             emit(std::make_unique<DarwinSensors>(sensors));
         });
 
-        on<Trigger<ServoTarget>>([this](const ServoTarget command) {
+        on<Trigger<ServoTarget>>().then([this](const ServoTarget command) {
             auto commandList = std::make_unique<std::vector<ServoTarget>>();
             commandList->push_back(command);
 

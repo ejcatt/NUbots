@@ -126,18 +126,18 @@ namespace input {
         };
 
         // Trigger the same function when either update
-        on<With<Configuration<GameController>>, Trigger<GlobalConfig>>("GameController Configuration", setup);
-        on<Trigger<Configuration<GameController>>, With<GlobalConfig>>("GameController Configuration", setup);
+        on<With<Configuration<GameController>>, Trigger<GlobalConfig>>().then("GameController Configuration", setup);
+        on<Trigger<Configuration<GameController>>, With<GlobalConfig>>().then("GameController Configuration", setup);
 
-        on<Trigger<Every<2, Per<std::chrono::seconds>>>>("GameController Reply", [this](const time_t&) {
+        on<Trigger<Every<2, Per<std::chrono::seconds>>>>().then("GameController Reply", [this](const time_t&) {
             sendReplyPacket(ReplyMessage::ALIVE);
         });
 
-        on<Trigger<ButtonLeftDown>>([this](const ButtonLeftDown&) {
+        on<Trigger<ButtonLeftDown>>().then([this](const ButtonLeftDown&) {
             // TODO: aggressive mode, chase ball and kick towards goal (basically disable strategy)
         });
 
-        on<Trigger<ButtonMiddleDown>>([this](const ButtonMiddleDown&) {
+        on<Trigger<ButtonMiddleDown>>().then([this](const ButtonMiddleDown&) {
             // TODO: fix this
             auto time = NUClear::clock::now();
             if (!selfPenalised) {

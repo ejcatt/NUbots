@@ -44,7 +44,7 @@ namespace planning {
 
     LookAtGoal::LookAtGoal(std::unique_ptr<NUClear::Environment> environment) : Reactor(std::move(environment)) {
 
-        on<Trigger<Configuration<GoalHeadBehaviourConfig>>>([this](const Configuration<GoalHeadBehaviourConfig>& config) {
+        on<Trigger<Configuration<GoalHeadBehaviourConfig>>>().then([this](const Configuration<GoalHeadBehaviourConfig>& config) {
             GOAL_SEARCH_TIMEOUT_MILLISECONDS = config["GOAL_SEARCH_TIMEOUT_MILLISECONDS"].as<float>();
             SCAN_YAW = config["SCAN_YAW"].as<arma::vec>();
             SCAN_PITCH = config["SCAN_PITCH"].as<arma::vec>();
@@ -53,7 +53,7 @@ namespace planning {
         //this reaction focuses on the ball - pan'n'scan if not visible and focus on as many objects as possible if visible
         lookAtReactionHandler = on<Trigger<std::vector<Goal>>,
             With<std::vector<Ball>>,
-            With<Sensors> >([this]
+            With<Sensors> >().then([this]
             (const std::vector<Goal>& goals,
              const std::vector<Ball>& balls,
              const Sensors& sensors) {
@@ -129,7 +129,7 @@ namespace planning {
 
         });
 
-        on<Trigger<Look::PanSelection>>([this](const Look::PanSelection& panSelection) {
+        on<Trigger<Look::PanSelection>>().then([this](const Look::PanSelection& panSelection) {
             lookAtReactionHandler.enable(panSelection.lookAtGoalInsteadOfBall);
         });
     }

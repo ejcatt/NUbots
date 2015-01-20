@@ -43,12 +43,12 @@ namespace planning {
     DivePlanner::DivePlanner(std::unique_ptr<NUClear::Environment> environment)
         : Reactor(std::move(environment)) {
 
-        on<Trigger<Configuration<DivePlanner> > >([this](const Configuration<DivePlanner>& config) {
+        on<Trigger<Configuration<DivePlanner> > >().then([this](const Configuration<DivePlanner>& config) {
         	SPEED_THRESHOLD = config["SPEED_THRESHOLD"].as<float>();
         	DISTANCE_THRESHOLD = config["DISTANCE_THRESHOLD"].as<float>();
         });
 
-        on<Trigger<Ball>, With<std::vector<Self>>, With<std::vector<messages::vision::Ball>>, With<DivePlan>>([this] (
+        on<Trigger<Ball>, With<std::vector<Self>>, With<std::vector<messages::vision::Ball>>, With<DivePlan>>().then([this] (
         	const Ball& ball,
         	const std::vector<Self>& selfs,
         	const std::vector<messages::vision::Ball>& vision_balls,

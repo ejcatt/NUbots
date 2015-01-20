@@ -55,7 +55,7 @@ namespace localisation {
         : Reactor(std::move(environment)),
           engine_(std::make_unique<MMKFRobotLocalisationEngine>()) {
 
-        on<Trigger<Configuration<MultiModalRobotModelConfig>>>(
+        on<Trigger<Configuration<MultiModalRobotModelConfig>>>().then(
             "MultiModalRobotModelConfig Update",
             [this](const Configuration<MultiModalRobotModelConfig>& config) {
 
@@ -63,14 +63,14 @@ namespace localisation {
             NUClear::log("Localisation config finished successfully!");
         });
 
-        on<Trigger<Configuration<MMKFRobotLocalisationEngineConfig>>>(
+        on<Trigger<Configuration<MMKFRobotLocalisationEngineConfig>>>().then(
             "MMKFRobotLocalisationEngineConfig Update",
             [this](const Configuration<MMKFRobotLocalisationEngineConfig>& config) {
             engine_->UpdateConfiguration(config);
         });
 
         on<Trigger<Startup>,
-           With<Optional<FieldDescription>>>("FieldDescription Update",
+           With<Optional<FieldDescription>>>().then("FieldDescription Update",
            [this](const Startup&, const std::shared_ptr<const FieldDescription>& desc) {
             if (desc == nullptr) {
                 throw std::runtime_error("FieldDescription Update: support::configuration::SoccerConfig module might not be installed");
@@ -83,7 +83,7 @@ namespace localisation {
         on<Trigger<ResetRobotHypotheses>,
            Options<Sync<MMKFRobotLocalisation>>,
            With<Sensors>
-          >("Localisation ResetRobotHypotheses", [this](const ResetRobotHypotheses& reset, const Sensors& sensors) {
+          >().then("Localisation ResetRobotHypotheses", [this](const ResetRobotHypotheses& reset, const Sensors& sensors) {
             engine_->Reset(reset, sensors);
 
             // auto& hypotheses = engine_->robot_models_.hypotheses();
@@ -96,7 +96,7 @@ namespace localisation {
         on<Trigger<Every<100, std::chrono::milliseconds>>,
            With<Sensors>,
            Options<Sync<MMKFRobotLocalisation>>
-           >("Localisation NUbugger Output", [this](const time_t&, const Sensors& sensors) {
+           >().then("Localisation NUbugger Output", [this](const time_t&, const Sensors& sensors) {
             auto& hypotheses = engine_->robot_models_.hypotheses();
             if (hypotheses.size() == 0) {
                 NUClear::log<NUClear::ERROR>("MMKFRobotLocalisation has no robot hypotheses.");
@@ -131,7 +131,7 @@ namespace localisation {
 
         on<Trigger<Sensors>,
            Options<Sync<MMKFRobotLocalisation>>
-          >("MMKFRobotLocalisation Odometry", [this](const Sensors& sensors) {
+          >().then("MMKFRobotLocalisation Odometry", [this](const Sensors& sensors) {
             auto curr_time = NUClear::clock::now();
             engine_->TimeUpdate(curr_time, sensors);
             engine_->OdometryMeasurementUpdate(sensors);
@@ -140,7 +140,7 @@ namespace localisation {
         on<Trigger<Every<100, Per<std::chrono::seconds>>>,
            With<Sensors>,
            Options<Sync<MMKFRobotLocalisation>>
-          >("MMKFRobotLocalisation Time", [this](const time_t&, const Sensors& sensors) {
+          >().then("MMKFRobotLocalisation Time", [this](const time_t&, const Sensors& sensors) {
             auto curr_time = NUClear::clock::now();
             engine_->TimeUpdate(curr_time, sensors);
         });
@@ -148,7 +148,7 @@ namespace localisation {
         on<Trigger<std::vector<messages::vision::Goal>>,
            With<Sensors>,
            Options<Sync<MMKFRobotLocalisation>>
-          >("MMKFRobotLocalisation Step",
+          >().then("MMKFRobotLocalisation Step",
             [this](const std::vector<messages::vision::Goal>& goals, const Sensors& sensors) {
 
             // Ignore empty vectors of goals.

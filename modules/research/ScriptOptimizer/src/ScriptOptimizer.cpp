@@ -36,12 +36,12 @@ namespace modules {
 
         ScriptOptimizer::ScriptOptimizer(std::unique_ptr<NUClear::Environment> environment) : Reactor(std::move(environment)), recording(false) {
 
-            on<Trigger<Initialize>>([this](const Initialize&) {
+            on<Trigger<Initialize>>().then([this](const Initialize&) {
                 emit(std::make_unique<OptimizeScriptResult>());
                 NUClear::log<NUClear::DEBUG>("Requesting initial script");
             });
 
-            on<Trigger<Network<OptimizeScript>>, With<NUClear::extensions::NetworkingConfiguration>>([this]
+            on<Trigger<Network<OptimizeScript>>, With<NUClear::extensions::NetworkingConfiguration>>().then([this]
                     (const Network<OptimizeScript>& task, const NUClear::extensions::NetworkingConfiguration config) {
 
                 // Check if this script is for us
@@ -87,7 +87,7 @@ namespace modules {
                 }
             });
 
-            on<Trigger<Raw<DarwinSensors>>>([this](const std::shared_ptr<const DarwinSensors>& frame) {
+            on<Trigger<Raw<DarwinSensors>>>().then([this](const std::shared_ptr<const DarwinSensors>& frame) {
 
                 // While we are recording, store all the frames in a vector
                 if(this->recording) {
@@ -95,7 +95,7 @@ namespace modules {
                 }
             });
 
-            on<Trigger<AllServoWaypointsComplete>>([this](const AllServoWaypointsComplete&) {
+            on<Trigger<AllServoWaypointsComplete>>().then([this](const AllServoWaypointsComplete&) {
 
                 // If we were recording
                 if(this->recording) {

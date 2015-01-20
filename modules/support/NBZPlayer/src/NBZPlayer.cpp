@@ -34,7 +34,7 @@ namespace support {
         : Reactor(std::move(environment)) {
 
 
-            on<Trigger<Configuration<NBZPlayer>>>([this](const Configuration<NBZPlayer>& config) {
+            on<Trigger<Configuration<NBZPlayer>>>().then([this](const Configuration<NBZPlayer>& config) {
 
                 std::string path = config["file"].as<std::string>();
                 replay = config["replay"].as<bool>();

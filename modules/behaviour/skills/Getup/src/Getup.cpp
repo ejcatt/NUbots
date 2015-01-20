@@ -49,7 +49,7 @@ namespace modules {
                 , gettingUp(false) {
 
                 //do a little configurating
-                on<Trigger<Configuration<Getup>>>([this] (const Configuration<Getup>& file){
+                on<Trigger<Configuration<Getup>>>().then([this] (const Configuration<Getup>& file){
 
                     //encode fallen angle as a cosine so we can compare it directly to the z axis value
                     double fallenAngleConfig = file.config["FALLEN_ANGLE"].as<double>();
@@ -60,7 +60,7 @@ namespace modules {
                     EXECUTION_PRIORITY = file.config["EXECUTION_PRIORITY"].as<float>();
                 });
 
-                fallenCheck = on<Trigger<Sensors>, Options<Single>>([this] (const Sensors& sensors) {
+                fallenCheck = on<Trigger<Sensors>, Options<Single>>().then([this] (const Sensors& sensors) {
 
                     //check if the orientation is smaller than the cosine of our fallen angle
                     if (!gettingUp && fabs(sensors.orientation(2,2)) < FALLEN_ANGLE) {
@@ -69,7 +69,7 @@ namespace modules {
                     }
                 });
 
-                on<Trigger<ExecuteGetup>, With<Sensors>>([this] (const ExecuteGetup&, const Sensors& sensors) {
+                on<Trigger<ExecuteGetup>, With<Sensors>>().then([this] (const ExecuteGetup&, const Sensors& sensors) {
 
                     gettingUp = true;
 
@@ -83,7 +83,7 @@ namespace modules {
                     updatePriority(EXECUTION_PRIORITY);
                 });
 
-                on<Trigger<KillGetup>, Options<Sync<Getup>>>([this] (const KillGetup&) {
+                on<Trigger<KillGetup>, Options<Sync<Getup>>>().then([this] (const KillGetup&) {
                     gettingUp = false;
                     updatePriority(0);
                     fallenCheck.enable();

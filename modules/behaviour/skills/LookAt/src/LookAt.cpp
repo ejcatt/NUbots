@@ -44,7 +44,7 @@ namespace modules {
             LookAt::LookAt(std::unique_ptr<NUClear::Environment> environment) : Reactor(std::move(environment)), id(size_t(this) * size_t(this) - size_t(this)) {
 
                 //do a little configurating
-                on<Trigger<Configuration<LookAt>>>([this] (const Configuration<LookAt>& config){
+                on<Trigger<Configuration<LookAt>>>().then([this] (const Configuration<LookAt>& config){
 
                     //pan speeds
                     FAST_SPEED = config["speed"]["fast"].as<double>();
@@ -60,7 +60,7 @@ namespace modules {
 
                 on<Trigger<Every<30, Per<std::chrono::seconds>>>,
                    With<Last<5,Sensors>>,
-                   Options<Sync<LookAt>>>([this](const time_t&,
+                   Options<Sync<LookAt>>>().then([this](const time_t&,
                                                   const LastList<Sensors>& sensors) {
 
 
@@ -137,7 +137,7 @@ namespace modules {
 
                 on<Trigger<std::vector<Look::Fixation>>,
                    With<CameraParameters>,
-                   Options<Sync<LookAt>>>([this](const std::vector<Look::Fixation>& fixations,
+                   Options<Sync<LookAt>>>().then([this](const std::vector<Look::Fixation>& fixations,
                                                   const CameraParameters& cameraParams) {
 
                     //start with the most permissive settings possible and add items incrementally
@@ -165,7 +165,7 @@ namespace modules {
 
                 });
 
-                on<Trigger<std::vector<Look::Pan>>, Options<Sync<LookAt>>>([this](const std::vector<Look::Pan>& pan) {
+                on<Trigger<std::vector<Look::Pan>>, Options<Sync<LookAt>>>().then([this](const std::vector<Look::Pan>& pan) {
                     //copy the pan into the currentpoints
                     //XXX: actually we can simplify this a lot later on using angular sizes
                     saccading = false;
@@ -176,7 +176,7 @@ namespace modules {
                     }
                 });
 
-                on<Trigger<std::vector<Look::Saccade>>, Options<Sync<LookAt>>>([this](const std::vector<Look::Saccade>& saccade) {
+                on<Trigger<std::vector<Look::Saccade>>, Options<Sync<LookAt>>>().then([this](const std::vector<Look::Saccade>& saccade) {
                     (void)saccade;
                 });
 

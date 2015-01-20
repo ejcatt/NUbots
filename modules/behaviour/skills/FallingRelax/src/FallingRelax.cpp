@@ -45,7 +45,7 @@ namespace modules {
             FallingRelax::FallingRelax(std::unique_ptr<NUClear::Environment> environment) : Reactor(std::move(environment)), id(size_t(this) * size_t(this) - size_t(this)), falling(false) {
 
                 //do a little configurating
-                on<Trigger<Configuration<FallingRelax>>>([this] (const Configuration<FallingRelax>& config){
+                on<Trigger<Configuration<FallingRelax>>>().then([this] (const Configuration<FallingRelax>& config){
 
                     // Store falling angle as a cosine so we can compare it directly to the z axis value
                     double fallingAngle = config["FALLING_ANGLE"].as<double>();
@@ -60,7 +60,7 @@ namespace modules {
                     PRIORITY = config["PRIORITY"].as<float>();
                 });
 
-                on<Trigger<Last<5, Sensors>>, Options<Single>>([this] (const LastList<Sensors>& sensors) {
+                on<Trigger<Last<5, Sensors>>, Options<Single>>().then([this] (const LastList<Sensors>& sensors) {
 
                     if(!falling
                         && !sensors.empty()
@@ -99,12 +99,12 @@ namespace modules {
                     }
                 });
 
-                on<Trigger<Falling>>([this] (const Falling&) {
+                on<Trigger<Falling>>().then([this] (const Falling&) {
 
                     emit(std::make_unique<ExecuteScriptByName>(id, "Relax.yaml"));
                 });
 
-                on<Trigger<KillFalling>>([this] (const KillFalling&) {
+                on<Trigger<KillFalling>>().then([this] (const KillFalling&) {
                     falling = false;
                     updatePriority(0);
                 });

@@ -52,7 +52,7 @@ namespace localisation {
     KFBallLocalisation::KFBallLocalisation(std::unique_ptr<NUClear::Environment> environment)
             : Reactor(std::move(environment)) {
 
-        on<Trigger<Configuration<KFBallLocalisationEngineConfig>>>([this](const Configuration<KFBallLocalisationEngineConfig>& config) {
+        on<Trigger<Configuration<KFBallLocalisationEngineConfig>>>().then([this](const Configuration<KFBallLocalisationEngineConfig>& config) {
             engine_.UpdateConfiguration(config);
         });
 
@@ -60,9 +60,9 @@ namespace localisation {
         on<Trigger<Every<100, std::chrono::milliseconds>>,
            With<Sensors>,
            With<std::vector<Self>>,
-           Options<Sync<KFBallLocalisation>>>("NUbugger Output",
+           Options<Sync<KFBallLocalisation>>>().then("NUbugger Output",
                 [this](const time_t&, const Sensors& sensors, const std::vector<Self>& robots) {
-            
+
             arma::vec model_state = engine_.ball_filter_.get();
             arma::mat model_cov = engine_.ball_filter_.getCovariance();
 
@@ -94,21 +94,21 @@ namespace localisation {
 
         // on<Trigger<FakeOdometry>,
         //     Options<Sync<KFBallLocalisation>>
-        //     >("KFBallLocalisation Odometry", [this](const FakeOdometry& odom) {
+        //     >().then("KFBallLocalisation Odometry", [this](const FakeOdometry& odom) {
         //      auto curr_time = NUClear::clock::now();
         //      engine_.TimeUpdate(curr_time, odom);
         //  });
 
         on<Trigger<Every<100, Per<std::chrono::seconds>>>,
              Options<Sync<KFBallLocalisation>>
-            >("KFBallLocalisation Time", [this](const time_t&) {
+            >().then("KFBallLocalisation Time", [this](const time_t&) {
             auto curr_time = NUClear::clock::now();
             engine_.TimeUpdate(curr_time);
         });
 
         on<Trigger<std::vector<messages::vision::Ball>>,
              Options<Sync<KFBallLocalisation>>
-             >("KFBallLocalisation Step",
+             >().then("KFBallLocalisation Step",
                 [this](const std::vector<messages::vision::Ball>& balls) {
 
             if(balls.size() > 0) {

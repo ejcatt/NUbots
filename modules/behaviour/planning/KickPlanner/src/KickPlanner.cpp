@@ -54,7 +54,7 @@ namespace planning {
         : Reactor(std::move(environment)) {
 
 
-        on<Trigger<Configuration<KickPlanner> > >([this](const Configuration<KickPlanner>& config) {
+        on<Trigger<Configuration<KickPlanner> > >().then([this](const Configuration<KickPlanner>& config) {
             MAX_BALL_DISTANCE = config["MAX_BALL_DISTANCE"].as<float>();
             KICK_CORRIDOR_WIDTH = config["KICK_CORRIDOR_WIDTH"].as<float>();
             KICK_FORWARD_ANGLE_LIMIT = config["KICK_FORWARD_ANGLE_LIMIT"].as<float>();
@@ -62,7 +62,7 @@ namespace planning {
             FRAMES_NOT_SEEN_LIMIT = config["FRAMES_NOT_SEEN_LIMIT"].as<float>();
         });
 
-        on< Trigger<Ball>, With<std::vector<Self>>, With<std::vector<messages::vision::Ball>>, With<KickPlan> >([this] (
+        on< Trigger<Ball>, With<std::vector<Self>>, With<std::vector<messages::vision::Ball>>, With<KickPlan> >().then([this] (
             const Ball& ball,
             const std::vector<Self>& selfs,
             const std::vector<messages::vision::Ball>& vision_balls,

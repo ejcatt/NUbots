@@ -36,7 +36,7 @@ namespace strategy {
     PS3Walk::PS3Walk(std::unique_ptr<NUClear::Environment> environment)
         : Reactor(std::move(environment)) {
 
-        on<Trigger<Every<1, std::chrono::milliseconds>>, Options<Single>>([this](const time_t&) {
+        on<Trigger<Every<1, std::chrono::milliseconds>>, Options<Single>>().then([this](const time_t&) {
 
             JoystickEvent event;
             // read from joystick
@@ -120,7 +120,7 @@ namespace strategy {
 
         // output walk command based on updated strafe and rotation speed from joystick
         // TODO: potential performance gain: ignore if value hasn't changed since last emit?
-        on<Trigger<Every<50, std::chrono::milliseconds>>>([this](const time_t&) {
+        on<Trigger<Every<50, std::chrono::milliseconds>>>().then([this](const time_t&) {
 
             // Why armadillo why!!!
             arma::vec s = { strafe[0], strafe[1] };

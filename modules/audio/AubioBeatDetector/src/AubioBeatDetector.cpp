@@ -61,7 +61,7 @@ namespace modules {
 
         AubioBeatDetector::AubioBeatDetector(std::unique_ptr<NUClear::Environment> environment) : Reactor(std::move(environment)) {
 
-            on<Trigger<messages::input::SoundChunkSettings>>([this](const messages::input::SoundChunkSettings& settings) {
+            on<Trigger<messages::input::SoundChunkSettings>>().then([this](const messages::input::SoundChunkSettings& settings) {
 
                 // Store the settings of the sound chunks
                 m->sampleRate = settings.sampleRate;
@@ -76,7 +76,7 @@ namespace modules {
 
             });
 
-            on<Trigger<messages::input::SoundChunk>>([this](const messages::input::SoundChunk& chunk) {
+            on<Trigger<messages::input::SoundChunk>>().then([this](const messages::input::SoundChunk& chunk) {
 
                 for (size_t i = 0; i < m->chunkSize; ++i) {
 
@@ -106,7 +106,7 @@ namespace modules {
                 m->offset = (m->chunkSize + m->offset) % HOP_SIZE;
             });
 
-           on<Trigger<Last<2, BeatTime>>>([this](const std::vector<std::shared_ptr<const BeatTime>>& lastTwoBeats) {
+           on<Trigger<Last<2, BeatTime>>>().then([this](const std::vector<std::shared_ptr<const BeatTime>>& lastTwoBeats) {
 
                if(lastTwoBeats.size() == 2) {
                     auto beat = std::make_unique<messages::audio::Beat>();
@@ -117,7 +117,7 @@ namespace modules {
                }
            });
 
-           on<Trigger<Shutdown>>([this](const Shutdown&) {
+           on<Trigger<Shutdown>>().then([this](const Shutdown&) {
               del_aubio_tempo(m->tempoTracker);
               del_fvec(m->inputData);
               del_fvec(m->outputData);

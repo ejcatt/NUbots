@@ -41,7 +41,7 @@ namespace research {
     AutoClassifier::AutoClassifier(std::unique_ptr<NUClear::Environment> environment)
         : Reactor(std::move(environment)) {
 
-        on<Trigger<Configuration<AutoClassifier>>>([this] (const Configuration<AutoClassifier>& config) {
+        on<Trigger<Configuration<AutoClassifier>>>().then([this] (const Configuration<AutoClassifier>& config) {
             auto& orange = config["colours"]["orange"];
             orangeData.enabled = orange["enabled"].as<bool>();
             orangeData.range = orange["range"].as<double>();
@@ -63,7 +63,7 @@ namespace research {
             fieldClassifier.enable(greenData.enabled || whiteData.enabled);
         });
 
-        ballClassifier = on<Trigger<std::vector<Ball>>, With<LookUpTable>, Options<Single, Priority<NUClear::LOW>>>("Auto Classifier Balls", [this](
+        ballClassifier = on<Trigger<std::vector<Ball>>, With<LookUpTable>, Options<Single, Priority<NUClear::LOW>>>().then("Auto Classifier Balls", [this](
             const std::vector<Ball>& balls, const LookUpTable& lut) {
 
             // create a new lookup table
@@ -106,7 +106,7 @@ namespace research {
 
         });
 
-        goalClassifier = on<Trigger<std::vector<Goal>>, With<LookUpTable>, Options<Single, Priority<NUClear::LOW>>>("Auto Classifier Goals", [this](
+        goalClassifier = on<Trigger<std::vector<Goal>>, With<LookUpTable>, Options<Single, Priority<NUClear::LOW>>>().then("Auto Classifier Goals", [this](
             const std::vector<Goal>& goals, const LookUpTable& lut) {
 
             // create a new lookup table
@@ -150,7 +150,7 @@ namespace research {
 
         });
 
-        fieldClassifier = on<Trigger<ClassifiedImage<ObjectClass>>, With<LookUpTable>, Options<Single, Priority<NUClear::LOW>>>("Auto Classifier Field", [this](
+        fieldClassifier = on<Trigger<ClassifiedImage<ObjectClass>>, With<LookUpTable>, Options<Single, Priority<NUClear::LOW>>>().then("Auto Classifier Field", [this](
             const ClassifiedImage<ObjectClass>& classifiedImage, const LookUpTable& lut) {
 
             // create a new lookup table
