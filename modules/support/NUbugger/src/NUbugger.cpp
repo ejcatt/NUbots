@@ -171,7 +171,7 @@ namespace support {
         provideVision();
 
         // When we shutdown, close our publisher and our file if we have one
-        on<Trigger<Shutdown>>().then([this](const Shutdown&) {
+        on<Shutdown>().then([this] {
             pub.close();
 
             // Close the file if it exists

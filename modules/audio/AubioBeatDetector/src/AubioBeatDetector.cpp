@@ -117,7 +117,7 @@ namespace modules {
                }
            });
 
-           on<Trigger<Shutdown>>().then([this](const Shutdown&) {
+           on<Shutdown>().then([this] {
               del_aubio_tempo(m->tempoTracker);
               del_fvec(m->inputData);
               del_fvec(m->outputData);

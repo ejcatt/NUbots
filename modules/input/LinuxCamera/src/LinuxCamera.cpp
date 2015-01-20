@@ -47,7 +47,7 @@ namespace modules {
             });
 
             // When we shutdown, we must tell our camera class to close (stop streaming)
-            on<Trigger<Shutdown>>().then([this](const Shutdown&) {
+            on<Shutdown>().then([this] {
                 camera.closeCamera();
             });
 

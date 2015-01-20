@@ -51,10 +51,8 @@ namespace modules {
                         );
             });
 
-            on<Trigger<Shutdown>>().then([](const Shutdown&) {
-                // Stop espeak
-                espeak_Terminate();
-            });
+            // Terminate espeak on shutdown
+            on<Shutdown>().then(espeak_Terminate);
         }
 
     }  // output

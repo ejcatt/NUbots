@@ -131,7 +131,7 @@ namespace motion {
             emit(std::make_unique<WalkConfigSaved>());
         });
 
-        on<Trigger<Startup>>().then([this](const Startup&) {
+        on<Startup>().then([this] {
             //generateAndSaveStandScript();
             //reset();
             //state = State::LAST_STEP;

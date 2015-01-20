@@ -144,7 +144,7 @@ namespace support {
 
         });
 
-        on<Trigger<Shutdown>>().then([this](const Shutdown&) {
+        on<Shutdown>().then([this] {
             // Wait for threads to finish.
             frameListener->stop();
             commandListener->stop();
