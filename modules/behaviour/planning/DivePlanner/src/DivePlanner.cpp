@@ -43,7 +43,7 @@ namespace planning {
     DivePlanner::DivePlanner(std::unique_ptr<NUClear::Environment> environment)
         : Reactor(std::move(environment)) {
 
-        on<Trigger<Configuration<DivePlanner> > >().then([this](const Configuration<DivePlanner>& config) {
+        on<Configuration>("DivePlanner.yaml").then([this](const Configuration& config) {
         	SPEED_THRESHOLD = config["SPEED_THRESHOLD"].as<float>();
         	DISTANCE_THRESHOLD = config["DISTANCE_THRESHOLD"].as<float>();
         });

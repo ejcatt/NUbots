@@ -30,10 +30,11 @@ namespace utility {
 		bool operator==(const MockFeatureExtractor::ExtractedFeature& lhs, const MockFeatureExtractor::ExtractedFeature& rhs){return (lhs.featureID == rhs.featureID);}
 
 		using messages::input::ServoID;
+		using messages::support::Configuration;
 
 		MockFeatureExtractor::MockFeatureExtractor(){}
 
-		std::vector<MockFeatureExtractor::MockFeature> MockFeatureExtractor::setParameters(const messages::support::Configuration<MockFeatureExtractor>& config){
+		std::vector<MockFeatureExtractor::MockFeature> MockFeatureExtractor::setParameters(const Configuration& config){
 			int NUMBER_OF_MOCK_POINTS = config["NUMBER_OF_MOCK_POINTS"].as<int>();
 
 			arma::vec RADIUS = config["RADIUS"].as<arma::vec>();

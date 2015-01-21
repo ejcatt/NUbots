@@ -48,7 +48,7 @@ namespace utility {
 			bool sampleRandomBool(double probability_true);
 		public:
             static constexpr const char* CONFIGURATION_PATH = "MockFeatureExtractor.json";
-			std::vector<MockFeature> setParameters(const messages::support::Configuration<MockFeatureExtractor>& config);
+			std::vector<MockFeature> setParameters(const messages::support::Configuration& config);
 			class ExtractedFeature {
 			public:
 				arma::vec screenAngular;	//Compulsory
