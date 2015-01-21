@@ -36,7 +36,7 @@ namespace support {
     using messages::behaviour::proto::ActionStateChange;
 
     void NUbugger::provideBehaviour() {
-        handles["behaviour"].push_back(on<Trigger<ActionStart>>([this](const ActionStart& actionStart) {
+        handles["behaviour"].push_back(on<Trigger<ActionStart>>().then([this](const ActionStart& actionStart) {
             Message message;
             message.set_type(Message::BEHAVIOUR);
             message.set_filter_id(0);
@@ -54,7 +54,7 @@ namespace support {
             send(message);
         }));
 
-        handles["behaviour"].push_back(on<Trigger<ActionKill>>([this](const ActionKill& actionKill) {
+        handles["behaviour"].push_back(on<Trigger<ActionKill>>().then([this](const ActionKill& actionKill) {
             Message message;
             message.set_type(Message::BEHAVIOUR);
             message.set_filter_id(0);
@@ -72,7 +72,7 @@ namespace support {
             send(message);
         }));
 
-        handles["behaviour"].push_back(on<Trigger<RegisterAction>>([this] (const RegisterAction& action) {
+        handles["behaviour"].push_back(on<Trigger<RegisterAction>>().then([this] (const RegisterAction& action) {
             Message message;
             message.set_type(Message::BEHAVIOUR);
             message.set_filter_id(0);

@@ -22,7 +22,7 @@
 
 #include <vector>
 #include <armadillo>
-#include <nuclear_bits/LogLevel.h>
+#include <nuclear>
 #include <cmath>
 #include <nuclear>
 

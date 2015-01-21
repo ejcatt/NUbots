@@ -40,7 +40,7 @@ namespace support {
     using messages::input::Image;
 
     void NUbugger::provideVision() {
-        handles["image"].push_back(on<Trigger<Image>, Options<Single, Priority<NUClear::LOW>>>([this](const Image& image) {
+        handles["image"].push_back(on<Trigger<Image>, Options<Single, Priority<NUClear::LOW>>>().then([this](const Image& image) {
 
             Message message;
             message.set_type(Message::IMAGE);
@@ -73,7 +73,7 @@ namespace support {
             send(message);
         }));
 
-        handles["classified_image"].push_back(on<Trigger<ClassifiedImage<ObjectClass>>, Options<Single, Priority<NUClear::LOW>>>([this](const ClassifiedImage<ObjectClass>& image) {
+        handles["classified_image"].push_back(on<Trigger<ClassifiedImage<ObjectClass>>, Options<Single, Priority<NUClear::LOW>>>().then([this](const ClassifiedImage<ObjectClass>& image) {
 
             Message message;
             message.set_type(Message::CLASSIFIED_IMAGE);
@@ -134,7 +134,7 @@ namespace support {
             send(message);
         }));
 
-        handles["balls"].push_back(on<Trigger<std::vector<Ball>>, Options<Single, Priority<NUClear::LOW>>>([this] (const std::vector<Ball>& balls) {
+        handles["balls"].push_back(on<Trigger<std::vector<Ball>>, Options<Single, Priority<NUClear::LOW>>>().then([this] (const std::vector<Ball>& balls) {
 
             Message message;
             message.set_type(Message::VISION_OBJECT);
@@ -159,7 +159,7 @@ namespace support {
 
         }));
 
-        handles["goals"].push_back(on<Trigger<std::vector<Goal>>, Options<Single, Priority<NUClear::LOW>>>([this] (const std::vector<Goal>& goals) {
+        handles["goals"].push_back(on<Trigger<std::vector<Goal>>, Options<Single, Priority<NUClear::LOW>>>().then([this] (const std::vector<Goal>& goals) {
 
             Message message;
             message.set_type(Message::VISION_OBJECT);

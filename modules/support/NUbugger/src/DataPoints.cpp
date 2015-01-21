@@ -32,8 +32,8 @@ namespace support {
 
     void NUbugger::provideDataPoints() {
 
-        handles["data_points"].push_back(on<Trigger<DataPoint>>([this](const DataPoint& dataPoint) {
-            
+        handles["data_points"].push_back(on<Trigger<DataPoint>>().then([this](const DataPoint& dataPoint) {
+
             try{
                 uint filterId = dataPointFilterIds.find(dataPoint.label()) == dataPointFilterIds.end()
                     ? dataPointFilterIds.insert(std::make_pair(dataPoint.label(), dataPointFilterId++)).first->second
