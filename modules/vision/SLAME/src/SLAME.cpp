@@ -61,7 +61,7 @@ namespace modules {
                 //ORBModule.setParameters(config);
             });
 
-            on<Trigger<Image>, With<std::vector<Self>, Sensors>, Options<Single>>().then("SLAME", [this](const Image& image, const std::vector<Self>& selfs, const Sensors& sensors){
+            on<Trigger<Image>, With<std::vector<Self>, Sensors>, Single>().then("SLAME", [this](const Image& image, const std::vector<Self>& selfs, const Sensors& sensors){
                 switch(FEATURE_EXTRACTOR_TYPE){
                     case (FeatureExtractorType::ORB):
                         //emit(ORBModule.getSLAMEObjects(image, selfs[0], sensors));

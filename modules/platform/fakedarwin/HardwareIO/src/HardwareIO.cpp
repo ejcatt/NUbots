@@ -140,7 +140,7 @@ namespace fakedarwin {
             servo.temperature = 0;
         }
 
-        on<Trigger<Every<60, Per<std::chrono::seconds>>>, Options<Single>>().then([this](const time_t&) {
+        on<Trigger<Every<60, Per<std::chrono::seconds>>>, Single>().then([this](const time_t&) {
 
             for (int i = 0; i < 20; ++i) {
 
@@ -172,7 +172,7 @@ namespace fakedarwin {
         });
 
         // NOTE: dev test, makes random angles between -PI and PI
-        /*on<Trigger<Every<2, std::chrono::seconds> >, Options<Single> >([this](const time_t& time) {
+        /*on<Trigger<Every<2, std::chrono::seconds> >, Single >([this](const time_t& time) {
 
 //          sensors.servo[ServoID::R_SHOULDER_PITCH].goalPosition = target;
 //          sensors.servo[ServoID::L_SHOULDER_PITCH].goalPosition = target;

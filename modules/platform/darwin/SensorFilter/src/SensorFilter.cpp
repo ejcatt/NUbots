@@ -161,7 +161,7 @@ namespace modules {
 
                 on< Trigger<DarwinSensors>
                   , With<Optional<Sensors>>
-                  , Options<Single>>().then([this](const DarwinSensors& input,
+                  , Single>().then([this](const DarwinSensors& input,
                                             const std::shared_ptr<const Sensors>& previousSensors) {
 
                     auto sensors = std::make_unique<Sensors>();

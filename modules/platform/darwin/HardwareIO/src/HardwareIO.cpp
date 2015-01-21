@@ -148,7 +148,7 @@ namespace darwin {
         });
 
         // This trigger gets the sensor data from the CM730
-        on<Trigger<Every<60, Per<std::chrono::seconds>>>, Options<Single>>().then([this](const time_t&) {
+        on<Trigger<Every<60, Per<std::chrono::seconds>>>, Single>().then([this](const time_t&) {
 
             // Our final sensor output
             auto sensors = std::make_unique<DarwinSensors>();

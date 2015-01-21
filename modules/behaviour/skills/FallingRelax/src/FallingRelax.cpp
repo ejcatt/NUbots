@@ -60,7 +60,7 @@ namespace modules {
                     PRIORITY = config["PRIORITY"].as<float>();
                 });
 
-                on<Trigger<Last<5, Sensors>>, Options<Single>>().then([this] (const LastList<Sensors>& sensors) {
+                on<Trigger<Last<5, Sensors>>, Single>().then([this] (const LastList<Sensors>& sensors) {
 
                     if(!falling
                         && !sensors.empty()

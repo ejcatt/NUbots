@@ -60,7 +60,7 @@ namespace modules {
                     EXECUTION_PRIORITY = file.config["EXECUTION_PRIORITY"].as<float>();
                 });
 
-                fallenCheck = on<Trigger<Sensors>, Options<Single>>().then([this] (const Sensors& sensors) {
+                fallenCheck = on<Trigger<Sensors>, Single>().then([this] (const Sensors& sensors) {
 
                     //check if the orientation is smaller than the cosine of our fallen angle
                     if (!gettingUp && fabs(sensors.orientation(2,2)) < FALLEN_ANGLE) {

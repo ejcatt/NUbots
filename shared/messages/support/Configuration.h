@@ -98,10 +98,10 @@ namespace NUClear {
                 }
 
                 template <typename DSL>
-                static inline std::unique_ptr<messages::support::Configuration> get(threading::ReactionTask&) {
+                static inline std::shared_ptr<messages::support::Configuration> get(threading::ReactionTask&) {
 
                     // Return our thread local variable
-                    return std::make_unique<messages::support::Configuration>("temp!", YAML::Node());
+                    return std::make_shared<messages::support::Configuration>("temp!", YAML::Node());
                 }
 
             };

@@ -36,7 +36,7 @@ namespace strategy {
     PS3Walk::PS3Walk(std::unique_ptr<NUClear::Environment> environment)
         : Reactor(std::move(environment)) {
 
-        on<Trigger<Every<1, std::chrono::milliseconds>>, Options<Single>>().then([this](const time_t&) {
+        on<Trigger<Every<1, std::chrono::milliseconds>>, Single>().then([this](const time_t&) {
 
             JoystickEvent event;
             // read from joystick

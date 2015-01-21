@@ -105,7 +105,7 @@ namespace modules {
             on<Trigger<CameraParameters>, With<Configuration<LUTClassifier>>>().then(setParams);
             on<With<CameraParameters>, Trigger<Configuration<LUTClassifier>>>().then(setParams);
 
-            on<Trigger<Raw<Image>>, With<LookUpTable>, With<Raw<Sensors>>, Options<Single>>().then("Classify Image", [this](
+            on<Trigger<Raw<Image>>, With<LookUpTable>, With<Raw<Sensors>>, Single>().then("Classify Image", [this](
                 const std::shared_ptr<const Image>& rawImage, const LookUpTable& lut, const std::shared_ptr<const Sensors>& sensors) {
 
                 const auto& image = *rawImage;
