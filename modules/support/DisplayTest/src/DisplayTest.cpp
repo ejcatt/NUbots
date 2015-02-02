@@ -45,7 +45,7 @@ namespace support {
             NUClear::log("I got things from", net.sender);
         });
 
-        on<Trigger<Sensors>, Options<Single, Priority<NUClear::HIGH>>>().then([this](const Sensors& sensors) {
+        on<Trigger<Sensors>, Single, Priority::HIGH>().then([this](const Sensors& sensors) {
             emit(graph("orientation", sensors.orientation));
         });
     }

@@ -71,7 +71,7 @@ namespace support {
         on<With<Configuration<NUbuggerLite>>, Trigger<GlobalConfig>>().then("NUbuggerLite Configuration", setup);
         on<Trigger<Configuration<NUbuggerLite>>, With<GlobalConfig>>().then("NUbuggerLite Configuration", setup);
 
-        on<Trigger<Every<1, std::chrono::seconds>>, Options<Single, Priority<NUClear::LOW>>>().then([this] (const time_t&) {
+        on<Trigger<Every<1, std::chrono::seconds>>, Single, Priority::LOW>().then([this] (const time_t&) {
             if (socket) {
                 sockaddr_in socketAddress;
                 memset(&socketAddress, 0, sizeof(socketAddress));

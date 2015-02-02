@@ -74,7 +74,7 @@ namespace debug {
 
         });
 
-        on<Trigger<Sensors>, Options<Single, Priority<NUClear::LOW>>>().then([this](const Sensors& sensors) {
+        on<Trigger<Sensors>, Single, Priority::LOW>().then([this](const Sensors& sensors) {
 
             for (const auto& s : sensors.servos) {
                 if (s.id == ServoID::L_HIP_ROLL){

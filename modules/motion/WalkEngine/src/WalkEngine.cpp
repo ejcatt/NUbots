@@ -99,7 +99,7 @@ namespace motion {
             }
         }));
 
-        updateHandle = on<Trigger<Every<UPDATE_FREQUENCY, Per<std::chrono::seconds>>>, With<Sensors>, Options<Single, Priority<NUClear::HIGH>>>().then([this](const time_t&, const Sensors& sensors) {
+        updateHandle = on<Trigger<Every<UPDATE_FREQUENCY, Per<std::chrono::seconds>>>, With<Sensors>, Single, Priority::HIGH>().then([this](const time_t&, const Sensors& sensors) {
             update(sensors);
         }).disable();
 
