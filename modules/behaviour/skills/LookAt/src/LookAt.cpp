@@ -44,7 +44,7 @@ namespace modules {
             LookAt::LookAt(std::unique_ptr<NUClear::Environment> environment) : Reactor(std::move(environment)), id(size_t(this) * size_t(this) - size_t(this)) {
 
                 //do a little configurating
-                on<Trigger<Configuration<LookAt>>>().then([this] (const Configuration<LookAt>& config){
+                on<Configuration>("LookAt.yaml").then([this] (const Configuration& config){
 
                     //pan speeds
                     FAST_SPEED = config["speed"]["fast"].as<double>();

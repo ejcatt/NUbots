@@ -48,7 +48,6 @@ namespace modules {
 
             public:
                 explicit LookAt(std::unique_ptr<NUClear::Environment> environment);
-                static constexpr const char* CONFIGURATION_PATH = "LookAt.yaml";
             };
 
         }  // reflexes

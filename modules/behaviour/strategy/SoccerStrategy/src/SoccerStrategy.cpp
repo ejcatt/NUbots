@@ -70,7 +70,8 @@ namespace strategy {
 
     SoccerStrategy::SoccerStrategy(std::unique_ptr<NUClear::Environment> environment) : Reactor(std::move(environment)) {
 
-        on<Trigger<Configuration<SoccerStrategy>>>().then([this](const Configuration<SoccerStrategy>& config) {
+        on<Configuration>("SoccerStrategy.yaml").then([this](const Configuration& config) {
+
             BALL_CLOSE_DISTANCE = config["ball_close_distance"].as<double>();
             BALL_LAST_SEEN_MAX_TIME = durationFromSeconds(config["ball_last_seen_max_time"].as<double>());
             GOAL_LAST_SEEN_MAX_TIME = durationFromSeconds(config["goal_last_seen_max_time"].as<double>());

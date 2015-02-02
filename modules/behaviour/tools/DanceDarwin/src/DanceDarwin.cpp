@@ -27,14 +27,9 @@ namespace modules {
     namespace behaviour {
         namespace tools {
 
-            struct DanceScripts {
-                // For scripts we want updates on the whole scripts directory
-                static constexpr const char* CONFIGURATION_PATH = "scripts/dance/";
-            };
-
             DanceDarwin::DanceDarwin(std::unique_ptr<NUClear::Environment> environment) : Reactor(std::move(environment)) {
 
-                on<Trigger<messages::support::Configuration<DanceScripts>>>().then([this](const messages::support::Configuration<DanceScripts>& script) {
+                on<Configuration>("scripts/dance").then([this](const Configuration& script) {
                     // Add this script to our list of scripts
                     scripts.insert(std::make_pair(script.name, script.config));
                 });

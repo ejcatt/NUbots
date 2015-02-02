@@ -48,7 +48,7 @@ namespace skills {
         , id(size_t(this) * size_t(this) - size_t(this)) {
 
         // do a little configurating
-        on<Trigger<Configuration<KickScript>>>().then([this] (const Configuration<KickScript>& config){
+        on<Configuration>("KickScript.yaml").then([this] (const Configuration& config){
             KICK_PRIORITY = config["KICK_PRIORITY"].as<float>();
             EXECUTION_PRIORITY = config["EXECUTION_PRIORITY"].as<float>();
         });

@@ -72,9 +72,8 @@ namespace strategy {
         bool isGoalie();
         bool inZone(const messages::behaviour::FieldTarget& object);
         bool ballDistance();
-    public:
-        static constexpr const char* CONFIGURATION_PATH = "SoccerStrategy.yaml";
 
+    public:
         explicit SoccerStrategy(std::unique_ptr<NUClear::Environment> environment);
     };
 

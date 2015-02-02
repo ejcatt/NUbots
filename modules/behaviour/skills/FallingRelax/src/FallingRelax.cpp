@@ -45,7 +45,7 @@ namespace modules {
             FallingRelax::FallingRelax(std::unique_ptr<NUClear::Environment> environment) : Reactor(std::move(environment)), id(size_t(this) * size_t(this) - size_t(this)), falling(false) {
 
                 //do a little configurating
-                on<Trigger<Configuration<FallingRelax>>>().then([this] (const Configuration<FallingRelax>& config){
+                on<Configuration>("FallingRelax.yaml").then([this] (const Configuration& config){
 
                     // Store falling angle as a cosine so we can compare it directly to the z axis value
                     double fallingAngle = config["FALLING_ANGLE"].as<double>();

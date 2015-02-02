@@ -58,7 +58,7 @@ namespace skills {
         , id(size_t(this) * size_t(this) - size_t(this)) {
 
         // do a little configurating
-        on<Trigger<Configuration<GoalSaver>>>().then([this] (const Configuration<GoalSaver>& config){
+        on<Configuration>("GoalSaver.yaml").then([this] (const Configuration& config){
             DIVE_PRIORITY = config["DIVE_PRIORITY"].as<float>();
             EXECUTION_PRIORITY = config["EXECUTION_PRIORITY"].as<float>();
         });

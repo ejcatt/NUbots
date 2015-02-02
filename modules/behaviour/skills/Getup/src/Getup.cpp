@@ -49,7 +49,7 @@ namespace modules {
                 , gettingUp(false) {
 
                 //do a little configurating
-                on<Trigger<Configuration<Getup>>>().then([this] (const Configuration<Getup>& file){
+                on<Configuration>("Getup.yaml").then([this] (const Configuration& file){
 
                     //encode fallen angle as a cosine so we can compare it directly to the z axis value
                     double fallenAngleConfig = file.config["FALLEN_ANGLE"].as<double>();

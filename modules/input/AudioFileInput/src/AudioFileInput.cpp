@@ -36,13 +36,9 @@ namespace modules {
                 SndfileHandle file;
         };
 
-        struct AudioFileConfiguration {
-            static constexpr const char* CONFIGURATION_PATH = "AudioFileInput.yaml";
-        };
-
         AudioFileInput::AudioFileInput(std::unique_ptr<NUClear::Environment> environment) : Reactor(std::move(environment)) {
             // Load our file name configuration.
-            on<Trigger<messages::support::Configuration<AudioFileConfiguration>>>().then([this](const messages::support::Configuration<AudioFileConfiguration>& configfile) {
+            on<Configuration>("AudioFileInput.yaml").then([this](const Configuration& configfile) {
                     std::string filePath = configfile.config["file"];
                     NUClear::log<NUClear::DEBUG>("Loading sound file: ", filePath);
                     m->file = SndfileHandle(filePath.c_str());

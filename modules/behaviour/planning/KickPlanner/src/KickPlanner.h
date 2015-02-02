@@ -31,7 +31,6 @@ namespace planning {
     public:
         /// @brief Called by the powerplant to build and setup the KickPlanner reactor.
         explicit KickPlanner(std::unique_ptr<NUClear::Environment> environment);
-        static constexpr const char* CONFIGURATION_PATH = "KickPlanner.yaml";
 
     private:
         size_t framesNotSeen = 1000;

@@ -116,7 +116,6 @@ namespace modules {
 
                 public:
                     explicit WalkPathPlanner(std::unique_ptr<NUClear::Environment> environment);
-                    static constexpr const char* CONFIGURATION_PATH = "WalkPathPlanner.yaml";
             };
 
         }  // planning

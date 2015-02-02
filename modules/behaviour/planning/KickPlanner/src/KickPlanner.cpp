@@ -54,7 +54,8 @@ namespace planning {
         : Reactor(std::move(environment)) {
 
 
-        on<Trigger<Configuration<KickPlanner> > >().then([this](const Configuration<KickPlanner>& config) {
+        on<Configuration>("KickPlanner.yaml").then([this](const Configuration& config) {
+
             MAX_BALL_DISTANCE = config["MAX_BALL_DISTANCE"].as<float>();
             KICK_CORRIDOR_WIDTH = config["KICK_CORRIDOR_WIDTH"].as<float>();
             KICK_FORWARD_ANGLE_LIMIT = config["KICK_FORWARD_ANGLE_LIMIT"].as<float>();

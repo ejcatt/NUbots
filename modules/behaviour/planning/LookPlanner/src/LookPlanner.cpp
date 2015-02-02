@@ -52,7 +52,7 @@ namespace planning {
     LookPlanner::LookPlanner(std::unique_ptr<NUClear::Environment> environment)
         : Reactor(std::move(environment)) {
 
-        on<Trigger<Configuration<LookPlanner>>>().then([this] (const Configuration<LookPlanner>& config){
+        on<Configuration>("LookPlanner.yaml").then([this] (const Configuration& config){
             //pan speeds
             VISUAL_TRACKING_TIMEOUT = config["visual_tracking_timeout"].as<double>();
             LOCALISATION_TRACKING_TIMEOUT = config["localisation_tracking_timeout"].as<double>();

@@ -51,7 +51,7 @@ namespace modules {
                 camera.closeCamera();
             });
 
-            on<Trigger<Configuration<LinuxCamera>>>().then([this](const Configuration<LinuxCamera>& config) {
+            on<Configuration>("LinuxCamera.yaml").then([this](const Configuration& config) {
 
                 auto cameraParameters = std::make_unique<CameraParameters>();
 

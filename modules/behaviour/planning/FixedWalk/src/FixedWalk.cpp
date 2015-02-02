@@ -40,8 +40,6 @@ namespace planning {
 
 
     FixedWalk::FixedWalk(std::unique_ptr<NUClear::Environment> environment) : Reactor(std::move(environment)), active(false){
-        // on<Trigger<Configuration<FixedWalk>>>().then([this] (const Configuration<FixedWalk>& file){
-        // });
 
         on<Trigger<ExecuteGetup>>().then("FixedWalk::Getup", [this](const ExecuteGetup&){
             //record fall time

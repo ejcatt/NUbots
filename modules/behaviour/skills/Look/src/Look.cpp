@@ -44,7 +44,7 @@ namespace modules {
             Look::Look(std::unique_ptr<NUClear::Environment> environment) : Reactor(std::move(environment)), id(size_t(this) * size_t(this) - size_t(this)) {
 
                 //do a little configurating
-                on<Trigger<Configuration<Look>>>().then([this] (const Configuration<Look>& file){
+                on<Configuration>("Look.yaml").then([this] (const Configuration& file){
                     lastPanEnd = NUClear::clock::now();
                     //load fast and slow panspeed settings
 

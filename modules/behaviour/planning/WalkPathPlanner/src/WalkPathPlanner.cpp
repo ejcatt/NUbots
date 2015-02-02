@@ -64,7 +64,7 @@ namespace modules {
                     std::cerr<<__FILE__<<", "<<__LINE__<<": "<<__func__<<std::endl;
 
                 //do a little configurating
-                on<Trigger<Configuration<WalkPathPlanner>>>().then([this] (const Configuration<WalkPathPlanner>& file){
+                on<Configuration>("WalkPathPlanner.yaml").then([this] (const Configuration& file){
                     std::cerr<<__FILE__<<", "<<__LINE__<<": "<<__func__<<std::endl;
 
                     turnSpeed = file.config["turnSpeed"].as<float>();
