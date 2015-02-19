@@ -17,22 +17,22 @@
  * Copyright 2013 NUBots <nubots@nubots.net>
  */
 
-#ifndef MODULES_SUPPORT_CONFIGURATION_SOCCERCONFIG_H
-#define MODULES_SUPPORT_CONFIGURATION_SOCCERCONFIG_H
+#ifndef MODULES_SUPPORT_FILEWATCHEREXTENSION_H
+#define MODULES_SUPPORT_FILEWATCHEREXTENSION_H
 
 #include <nuclear>
 
 namespace modules {
 namespace support {
-namespace configuration {
 
-    class SoccerConfig : public NUClear::Reactor {
+    class FileWatcherExtension : public NUClear::Reactor {
+    private:
+    	int watcherFd;
     public:
-        /// @brief Called by the powerplant to build and setup the SoccerConfig reactor.
-        explicit SoccerConfig(std::unique_ptr<NUClear::Environment> environment);
+        /// @brief Called by the powerplant to build and setup the FileWatcherExtension reactor.
+        explicit FileWatcherExtension(std::unique_ptr<NUClear::Environment> environment);
     };
 
-}
 }
 }
 

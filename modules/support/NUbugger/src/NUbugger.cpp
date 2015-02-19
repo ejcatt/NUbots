@@ -51,7 +51,7 @@ namespace support {
 
         powerplant.addServiceTask(NUClear::threading::ThreadWorker::ServiceTask(std::bind(std::mem_fn(&NUbugger::run), this), std::bind(std::mem_fn(&NUbugger::kill), this)));
 
-        on<Trigger<Configuration<NUbugger>>>().then([this] (const Configuration<NUbugger>& config) {
+        on<Configuration>("NUbugger.yaml").then([this] (const Configuration& config) {
 
             // TODO if network disables then we should unbind
 
@@ -153,7 +153,7 @@ namespace support {
             }
         });
 
-        on<Trigger<Every<1, std::chrono::seconds>>, Single, Priority::LOW>().then([this] (const time_t&) {
+        on<Every<1, std::chrono::seconds>, Single, Priority::LOW>().then([this] {
             Message message;
             message.set_type(Message::PING);
             message.set_filter_id(0);

@@ -140,7 +140,7 @@ namespace fakedarwin {
             servo.temperature = 0;
         }
 
-        on<Trigger<Every<60, Per<std::chrono::seconds>>>, Single>().then([this](const time_t&) {
+        on<Every<60, Per<std::chrono::seconds>>, Single>().then([this] {
 
             for (int i = 0; i < 20; ++i) {
 
@@ -215,7 +215,7 @@ namespace fakedarwin {
             commandList->push_back(command);
 
             // Emit it so it's captured by the reaction above
-            emit<Scope::DIRECT>(std::move(commandList));
+            emit<DIRECT>(std::move(commandList));
         });
     }
 }

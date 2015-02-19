@@ -47,7 +47,7 @@ namespace input {
 
         powerplant.addServiceTask(NUClear::threading::ThreadWorker::ServiceTask(std::bind(std::mem_fn(&GameController::run), this), std::bind(std::mem_fn(&GameController::kill), this)));
 
-        auto setup = [this] (const Configuration<GameController>& config, const GlobalConfig& globalConfig) {
+        auto setup = [this] (const Configuration& config, const GlobalConfig& globalConfig) {
 
             // TODO use an eventfd to allow changing the port dynamically
 
@@ -129,15 +129,15 @@ namespace input {
         on<With<Configuration<GameController>>, Trigger<GlobalConfig>>().then("GameController Configuration", setup);
         on<Trigger<Configuration<GameController>>, With<GlobalConfig>>().then("GameController Configuration", setup);
 
-        on<Trigger<Every<2, Per<std::chrono::seconds>>>>().then("GameController Reply", [this](const time_t&) {
+        on<Every<2, Per<std::chrono::seconds>>>().then("GameController Reply", [this] {
             sendReplyPacket(ReplyMessage::ALIVE);
         });
 
-        on<Trigger<ButtonLeftDown>>().then([this](const ButtonLeftDown&) {
+        on<Trigger<ButtonLeftDown>>().then([this] {
             // TODO: aggressive mode, chase ball and kick towards goal (basically disable strategy)
         });
 
-        on<Trigger<ButtonMiddleDown>>().then([this](const ButtonMiddleDown&) {
+        on<Trigger<ButtonMiddleDown>>().then([this] {
             // TODO: fix this
             auto time = NUClear::clock::now();
             if (!selfPenalised) {

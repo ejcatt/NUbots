@@ -51,7 +51,7 @@ namespace configuration {
     }
 
     FieldDescription LoadFieldDescription(
-        Configuration<FieldDescriptionConfig> config) {
+        const Configuration& config) {
         FieldDescription desc;
 
         desc.ball_radius = config["BallRadius"].as<double>();
@@ -84,9 +84,9 @@ namespace configuration {
     SoccerConfig::SoccerConfig(std::unique_ptr<NUClear::Environment> environment)
         : Reactor(std::move(environment)) {
 
-        on<Trigger<Configuration<FieldDescriptionConfig>>>().then(
+        on<Configuration>("FieldDescription.yaml").then(
             "FieldDescriptionConfig Update",
-            [this](const Configuration<FieldDescriptionConfig>& config) {
+            [this](const Configuration& config) {
             auto fd = std::make_unique<messages::support::FieldDescription>(LoadFieldDescription(config));
             emit(std::move(fd));
         });

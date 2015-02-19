@@ -17,24 +17,7 @@
  * Copyright 2013 NUBots <nubots@nubots.net>
  */
 
-#ifndef MODULES_SUPPORT_CONFIGURATION_SOCCERCONFIG_H
-#define MODULES_SUPPORT_CONFIGURATION_SOCCERCONFIG_H
-
-#include <nuclear>
-
-namespace modules {
-namespace support {
-namespace configuration {
-
-    class SoccerConfig : public NUClear::Reactor {
-    public:
-        /// @brief Called by the powerplant to build and setup the SoccerConfig reactor.
-        explicit SoccerConfig(std::unique_ptr<NUClear::Environment> environment);
-    };
-
-}
-}
-}
 
 
-#endif
+#define CATCH_CONFIG_MAIN  // This tells Catch to provide a main() - only do this in one cpp file
+#include <catch.hpp>

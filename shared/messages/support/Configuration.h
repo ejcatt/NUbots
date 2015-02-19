@@ -32,10 +32,10 @@ namespace messages {
          * @author Trent Houliston
          */
         struct Configuration {
-            std::string name;
+            std::string path;
             YAML::Node config;
 
-            Configuration(const std::string& name, YAML::Node config) : name(name), config(config) {};
+            Configuration(const std::string& path, YAML::Node config) : path(path), config(config) {};
 
             YAML::Node operator [] (const std::string& key) {
                 return config[key];

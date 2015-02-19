@@ -41,7 +41,7 @@ namespace debug {
 
     NUbugger::NUbugger(std::unique_ptr<NUClear::Environment> environment) : Reactor(std::move(environment)) {
 
-        on<Trigger<Every<50, milliseconds>>>().then([this](const time_t&) {
+        on<Every<50, milliseconds>>().then([this] {
 
             double period = 10;
             double freq = 1 / period;
@@ -84,7 +84,7 @@ namespace debug {
 
         });
 
-        on<Trigger<Every<1, std::chrono::seconds>>>().then([this] (const time_t&) {
+        on<Every<1, std::chrono::seconds>>().then([this] {
             std::random_device rd;
             std::mt19937 gen(rd());
             std::uniform_real_distribution<> dis(-2, 2);
