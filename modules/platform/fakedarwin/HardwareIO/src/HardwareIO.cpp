@@ -126,6 +126,9 @@ namespace fakedarwin {
             servo.iGain = 0;
             servo.pGain = 0;
 
+            //Torque
+            servo.torque = 0;
+
             // Targets
             servo.goalPosition = 0;
             servo.movingSpeed = M_PI_4;

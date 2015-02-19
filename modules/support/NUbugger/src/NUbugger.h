@@ -74,6 +74,8 @@ namespace modules {
             messages::input::proto::GameState::Data::Mode getMode(const messages::input::gameevents::Mode& phase);
             messages::input::proto::GameState::Data::PenaltyReason getPenaltyReason(const messages::input::gameevents::PenaltyReason& penaltyReason);
 
+            void sendConfigurationState();
+
             void send(zmq::message_t& packet);
             void send(messages::support::nubugger::proto::Message message);
 
@@ -81,6 +83,7 @@ namespace modules {
             void recvCommand(const messages::support::nubugger::proto::Message& message);
             void recvLookupTable(const messages::support::nubugger::proto::Message& message);
             void recvReactionHandles(const messages::support::nubugger::proto::Message& message);
+            void recvConfigurationState(const messages::support::nubugger::proto::Message& message);
 
             void EmitLocalisationModels(
                 const std::unique_ptr<messages::localisation::FieldObject>& robot_model,
@@ -89,6 +92,7 @@ namespace modules {
             void run();
             void kill();
         public:
+            static constexpr const char* IGNORE_TAG = "IGNORE";
             explicit NUbugger(std::unique_ptr<NUClear::Environment> environment);
         };
 

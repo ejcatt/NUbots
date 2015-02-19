@@ -34,7 +34,6 @@ namespace support {
 
         handles["data_points"].push_back(on<Trigger<DataPoint>>().then([this](const DataPoint& dataPoint) {
 
-            try{
                 uint filterId = dataPointFilterIds.find(dataPoint.label()) == dataPointFilterIds.end()
                     ? dataPointFilterIds.insert(std::make_pair(dataPoint.label(), dataPointFilterId++)).first->second
                     : dataPointFilterIds[dataPoint.label()];
@@ -46,9 +45,6 @@ namespace support {
                 *(message.mutable_data_point()) = dataPoint;
 
                 send(message);
-            } catch (...) {
-                NUClear::log<NUClear::ERROR>("EXCEPTION: Occasional crash from", __FILE__, __LINE__, __func__," TODO: FIX THIS!!");
-            }
         }));
     }
 }

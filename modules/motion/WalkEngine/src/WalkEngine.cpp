@@ -24,6 +24,7 @@
 #include <chrono>
 #include <cmath>
 
+#include "messages/behaviour/ServoCommand.h"
 #include "messages/support/Configuration.h"
 #include "messages/motion/WalkCommand.h"
 #include "messages/motion/ServoTarget.h"
@@ -44,13 +45,13 @@ namespace motion {
 
     using messages::input::ServoID;
     using messages::input::Sensors;
-    using messages::behaviour::LimbID;
+    using messages::input::LimbID;
     using messages::behaviour::ServoCommand;
     using messages::behaviour::WalkOptimiserCommand;
     using messages::behaviour::WalkConfigSaved;
     using messages::behaviour::RegisterAction;
     using messages::behaviour::ActionPriorites;
-    using messages::behaviour::LimbID;
+    using messages::input::LimbID;
     using messages::motion::WalkCommand;
     using messages::motion::WalkStartCommand;
     using messages::motion::WalkStopCommand;
@@ -148,8 +149,10 @@ namespace motion {
         auto& stance = config["stance"];
         bodyHeight = stance["body_height"].as<Expression>();
         bodyTilt = stance["body_tilt"].as<Expression>();
-        qLArm = stance["arms"]["left"].as<arma::vec>();
-        qRArm = stance["arms"]["right"].as<arma::vec>();
+        qLArmStart = stance["arms"]["left"]["start"].as<arma::vec>();
+        qLArmEnd = stance["arms"]["left"]["end"].as<arma::vec>();
+        qRArmStart = stance["arms"]["right"]["start"].as<arma::vec>();
+        qRArmEnd = stance["arms"]["right"]["end"].as<arma::vec>();
         footOffset = stance["foot_offset"].as<arma::vec>();
         // gToe/heel overlap checking values
         stanceLimitY2 = DarwinModel::Leg::LENGTH_BETWEEN_LEGS - stance["limit_margin_y"].as<Expression>();
@@ -372,7 +375,7 @@ namespace motion {
 
         double phaseComp = std::min({1.0, foot[1] / 0.1, (1 - foot[1]) / 0.1});
         // Rotate foot around hip by the given hip roll compensation
-        if (swingLeg == LimbID::RIGHT_LEG) {
+        if (swingLeg == LimbID::LEFT_LEG) {
             rightFootTorso = rightFootTorso.rotateZLocal(-hipRollCompensation * phaseComp, sensors.forwardKinematics.find(ServoID::R_HIP_ROLL)->second);
         }
         else {
@@ -384,13 +387,17 @@ namespace motion {
         }
 
         if (balanceEnabled) {
-            balance(leftFootTorso, rightFootTorso, sensors);
+
+            // Apply balance to our support foot
+            balance(swingLeg == LimbID::LEFT_LEG ? rightFootTorso : leftFootTorso
+                , swingLeg == LimbID::LEFT_LEG ? LimbID::RIGHT_LEG : LimbID::LEFT_LEG
+                , sensors);
         }
 
         auto joints = calculateLegJointsTeamDarwin<DarwinModel>(leftFootTorso, rightFootTorso);
         auto waypoints = motionLegs(joints);
 
-        auto arms = motionArms();
+        auto arms = motionArms(phase);
         waypoints->insert(waypoints->end(), arms->begin(), arms->end());
 
         emit(std::move(waypoints));
@@ -411,13 +418,15 @@ namespace motion {
         }
 
         if (balanceEnabled) {
-            balance(leftFootTorso, rightFootTorso, sensors);
+            // Apply balance to both legs when standing still
+            balance(leftFootTorso, LimbID::LEFT_LEG, sensors);
+            balance(rightFootTorso, LimbID::RIGHT_LEG, sensors);
         }
 
         auto joints = calculateLegJointsTeamDarwin<DarwinModel>(leftFootTorso, rightFootTorso);
         auto waypoints = motionLegs(joints);
 
-        auto arms = motionArms();
+        auto arms = motionArms(0.5);
         waypoints->insert(waypoints->end(), arms->begin(), arms->end());
 
         emit(std::move(waypoints));
@@ -430,16 +439,23 @@ namespace motion {
         time_t time = NUClear::clock::now() + std::chrono::nanoseconds(std::nano::den / UPDATE_FREQUENCY);
 
         for (auto& joint : joints) {
-            waypoints->push_back({id, time, joint.first, joint.second, gainLegs}); // TODO: support separate gains for each leg
+            waypoints->push_back({ id, time, joint.first, joint.second, gainLegs, 100 }); // TODO: support separate gains for each leg
         }
 
         return std::move(waypoints);
     }
 
-    std::unique_ptr<std::vector<ServoCommand>> WalkEngine::motionArms() {
+    std::unique_ptr<std::vector<ServoCommand>> WalkEngine::motionArms(double phase) {
 
-        auto qLArmActual = qLArm;
-        auto qRArmActual = qRArm;
+        // Converts the phase into a sine wave that oscillates between 0 and 1 with a period of 2 phases
+        double easing = std::sin(M_PI * phase - M_PI / 2.0) / 2.0 + 0.5;
+        if (swingLeg == LimbID::LEFT_LEG) {
+            easing = -easing + 1.0; // Gets the 2nd half of the sine wave
+        }
+
+        // Linearly interpolate between the start and end positions using the easing parameter
+        arma::vec3 qLArmActual = easing * qLArmStart + (1.0 - easing) * qLArmEnd;
+        arma::vec3 qRArmActual = (1.0 - easing) * qRArmStart + easing * qRArmEnd;
 
         // Start arm/leg collision/prevention
         double rotLeftA = normalizeAngle(uLeftFoot.angle() - uTorso.angle());
@@ -457,12 +473,12 @@ namespace motion {
         waypoints->reserve(6);
 
         time_t time = NUClear::clock::now() + std::chrono::nanoseconds(std::nano::den/UPDATE_FREQUENCY);
-        waypoints->push_back({id, time, ServoID::R_SHOULDER_PITCH, float(qRArmActual[0]), gainArms});
-        waypoints->push_back({id, time, ServoID::R_SHOULDER_ROLL,  float(qRArmActual[1]), gainArms});
-        waypoints->push_back({id, time, ServoID::R_ELBOW,          float(qRArmActual[2]), gainArms});
-        waypoints->push_back({id, time, ServoID::L_SHOULDER_PITCH, float(qLArmActual[0]), gainArms});
-        waypoints->push_back({id, time, ServoID::L_SHOULDER_ROLL,  float(qLArmActual[1]), gainArms});
-        waypoints->push_back({id, time, ServoID::L_ELBOW,          float(qLArmActual[2]), gainArms});
+        waypoints->push_back({ id, time, ServoID::R_SHOULDER_PITCH, float(qRArmActual[0]), gainArms, 100 });
+        waypoints->push_back({ id, time, ServoID::R_SHOULDER_ROLL,  float(qRArmActual[1]), gainArms, 100 });
+        waypoints->push_back({ id, time, ServoID::R_ELBOW,          float(qRArmActual[2]), gainArms, 100 });
+        waypoints->push_back({ id, time, ServoID::L_SHOULDER_PITCH, float(qLArmActual[0]), gainArms, 100 });
+        waypoints->push_back({ id, time, ServoID::L_SHOULDER_ROLL,  float(qLArmActual[1]), gainArms, 100 });
+        waypoints->push_back({ id, time, ServoID::L_ELBOW,          float(qLArmActual[2]), gainArms, 100 });
 
         return std::move(waypoints);
     }

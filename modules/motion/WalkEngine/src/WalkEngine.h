@@ -27,6 +27,7 @@
 
 #include "messages/support/Configuration.h"
 #include "messages/behaviour/Action.h"
+#include "messages/behaviour/ServoCommand.h"
 #include "messages/input/Sensors.h"
 #include "utility/math/geometry/UnitQuaternion.h"
 
@@ -49,12 +50,12 @@ namespace motion {
          * The number of servo updates performnced per second
          * TODO: Probably be a global config somewhere, waiting on NUClear to support runtime on<Trigger<Every>> arguments
          */
-        static constexpr size_t UPDATE_FREQUENCY = 60;
+        static constexpr size_t UPDATE_FREQUENCY = 90;
 
         static constexpr const char* CONFIGURATION_PATH = "WalkEngine.yaml";
         explicit WalkEngine().then(std::unique_ptr<NUClear::Environment> environment);
     private:
-        using LimbID         = messages::behaviour::LimbID;
+        using LimbID         = messages::input::LimbID;
         using ServoCommand   = messages::behaviour::ServoCommand;
         using Sensors        = messages::input::Sensors;
         using ServoID        = messages::input::ServoID;
@@ -163,8 +164,10 @@ namespace motion {
         // standard offset
         Transform2D uLRFootOffset;
         // arm poses
-        arma::vec3 qLArm;
-        arma::vec3 qRArm;
+        arma::vec3 qLArmStart;
+        arma::vec3 qLArmEnd;
+        arma::vec3 qRArmStart;
+        arma::vec3 qRArmEnd;
         LimbID swingLegInitial = LimbID::LEFT_LEG;
 
         double balanceEnabled;
@@ -209,7 +212,7 @@ namespace motion {
         void update(const Sensors& sensors);
         void updateStep(double phase, const Sensors& sensors);
         void updateStill(const Sensors& sensors = Sensors());
-        void balance(Transform3D& leftFootTarget, Transform3D& rightFootTarget, const Sensors& sensors);
+        void balance(Transform3D& target, const LimbID& leg, const Sensors& sensors);
 
         void calculateNewStep();
         void setVelocity(Transform2D velocity);
@@ -219,7 +222,7 @@ namespace motion {
         void localise(Transform2D position);
 
         std::unique_ptr<std::vector<ServoCommand>> motionLegs(std::vector<std::pair<ServoID, float>> joints);
-        std::unique_ptr<std::vector<ServoCommand>> motionArms();
+        std::unique_ptr<std::vector<ServoCommand>> motionArms(double phase);
 
         Transform2D getNewFootTarget(const Transform2D& velocity, const Transform2D& leftFoot, const Transform2D& rightFoot, const LimbID& swingLeg);
 
