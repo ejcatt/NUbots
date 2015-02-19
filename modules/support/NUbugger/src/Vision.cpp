@@ -194,7 +194,7 @@ namespace support {
             send(message);
         }));
 
-        handles["lookuptable"].push_back(on<Trigger<LookUpTableDiff>, Options<Single, Priority<NUClear::LOW>>>([this] (const LookUpTableDiff& tableDiff) {
+        handles["lookuptable"].push_back(on<Trigger<LookUpTableDiff>, Single, Priority::LOW>().then([this] (const LookUpTableDiff& tableDiff) {
             Message message;
             message.set_type(Message::LOOKUP_TABLE_DIFF);
             message.set_filter_id(0);
