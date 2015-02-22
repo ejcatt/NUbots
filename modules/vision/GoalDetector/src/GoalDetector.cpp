@@ -93,8 +93,8 @@ namespace vision {
         on<Trigger<CameraParameters>, With<Configuration<GoalDetector>>>().then(setParams);
         on<With<CameraParameters>, Trigger<Configuration<GoalDetector>>>().then(setParams);
 
-        on<Trigger<Raw<ClassifiedImage<ObjectClass>>>, With<CameraParameters>, With<Optional<FieldDescription>>, Single>().then("Goal Detector", [this](
-            const std::shared_ptr<const ClassifiedImage<ObjectClass>>& rawImage, const CameraParameters& cam, const std::shared_ptr<const FieldDescription>& field) {
+        on<Trigger<ClassifiedImage<ObjectClass>>, With<CameraParameters>, With<FieldDescription>, Single>().then("Goal Detector", [this](
+            const std::shared_ptr<const ClassifiedImage<ObjectClass>>& rawImage, const CameraParameters& cam, const FieldDescription& field) {
             if (field == nullptr) {
                 NUClear::log(__FILE__, ", ", __LINE__, ": FieldDescription Update: support::configuration::SoccerConfig module might not be installed.");
                 throw std::runtime_error("FieldDescription Update: support::configuration::SoccerConfig module might not be installed");

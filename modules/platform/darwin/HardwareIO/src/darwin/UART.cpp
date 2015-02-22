@@ -25,6 +25,9 @@
 #include <iostream>
 
 namespace Darwin {
+
+    using messages::support::Configuration;
+
     uint8_t calculateChecksum(void* command) {
 
         uint8_t* data = static_cast<uint8_t*>(command);
@@ -51,7 +54,7 @@ namespace Darwin {
         return (~checksum);
     }
 
-    void UART::setConfig(const messages::support::Configuration<UART>& config){
+    void UART::setConfig(const Configuration& config){
         PACKET_WAIT = config["PACKET_WAIT"].as<int>();
         BYTE_WAIT = config["BYTE_WAIT"].as<int>();
         BUS_RESET_WAIT_TIME_uS = config["BUS_RESET_WAIT_TIME_uS"].as<int>();

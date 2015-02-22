@@ -116,7 +116,7 @@ namespace Darwin {
 
     public:
         static constexpr const char* CONFIGURATION_PATH = "DarwinPlatform.yaml";
-        void setConfig(const messages::support::Configuration<UART>& config);
+        void setConfig(const messages::support::Configuration& config);
         /**
          * @brief Constructs a new UART instance using the passed device path as the TTY device
          *
