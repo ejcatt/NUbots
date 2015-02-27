@@ -73,7 +73,7 @@ namespace motion {
         : Reactor(std::move(environment))
         , id(size_t(this) * size_t(this) - size_t(this)) {
 
-        emit<Scope::INITIALIZE>(std::make_unique<RegisterAction>(RegisterAction {
+        emit<INITIALIZE>(std::make_unique<RegisterAction>(RegisterAction {
             id,
             "Walk Engine",
             {

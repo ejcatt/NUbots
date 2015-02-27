@@ -223,7 +223,7 @@ namespace modules {
                     waypoints->push_back({id, time, ServoID::HEAD_PITCH,    float(std::fmin(std::fmax(headPitch,minPitch),maxPitch)), 30.f});
                     emit(std::move(waypoints));
                 });*/
-                emit<Scope::INITIALIZE>(std::make_unique<RegisterAction>(RegisterAction {
+                emit<INITIALIZE>(std::make_unique<RegisterAction>(RegisterAction {
                     id,
                     "Look",
                     { std::pair<float, std::set<LimbID>>(30.0, { LimbID::HEAD }) },

@@ -181,7 +181,7 @@ namespace modules {
                     (void)saccade;
                 });
 
-                emit<Scope::INITIALIZE>(std::make_unique<RegisterAction>(RegisterAction {
+                emit<INITIALIZE>(std::make_unique<RegisterAction>(RegisterAction {
                     id,
                     "Look",
                     { std::pair<float, std::set<LimbID>>(30.0, { LimbID::HEAD }) },

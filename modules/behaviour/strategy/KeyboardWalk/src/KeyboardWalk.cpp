@@ -48,7 +48,7 @@ namespace strategy {
             moving = false;
         });
 
-        // emit<Scope::INITIALIZE>(std::make_unique<WalkStartCommand>());
+        // emit<INITIALIZE>(std::make_unique<WalkStartCommand>());
         // moving = true;
     }
 

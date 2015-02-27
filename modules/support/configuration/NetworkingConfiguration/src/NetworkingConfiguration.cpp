@@ -40,7 +40,7 @@ namespace modules {
                     c->networkAddress = networkAddress;
 
                     // Send the config now
-                    emit<Scope::DIRECT>(std::move(c));
+                    emit<DIRECT>(std::move(c));
                 });
             }
 

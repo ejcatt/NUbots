@@ -261,11 +261,11 @@ namespace support {
             data.push_back(messages::vision::Colour(s));
         }
         auto lut = std::make_unique<LookUpTable>(lookuptable.bits_y(), lookuptable.bits_cb(), lookuptable.bits_cr(), std::move(data));
-        emit<Scope::DIRECT>(std::move(lut));
+        emit<DIRECT>(std::move(lut));
 
         if (lookuptable.save()) {
             log<NUClear::INFO>("Saving LUT to file");
-            emit<Scope::DIRECT>(std::make_unique<SaveLookUpTable>());
+            emit<DIRECT>(std::make_unique<SaveLookUpTable>());
         }
     }
 

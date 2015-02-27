@@ -54,7 +54,7 @@ namespace modules {
                     fastSpeed = config["fast_speed"].as<double>();
                     slowSpeed = config["slow_speed"].as<double>();
 
-                    //Gains                    
+                    //Gains
                     headGain = config["head_gain"].as<double>();
                     headTorque = config["head_torque"].as<double>();
 
@@ -88,11 +88,11 @@ namespace modules {
 
 
 
-                on<Trigger<ExecuteHeadController>>([this] (const ExecuteHeadController&) {                
+                on<Trigger<ExecuteHeadController>>([this] (const ExecuteHeadController&) {
 
                 });
 
-                emit<Scope::INITIALIZE>(std::make_unique<RegisterAction>(RegisterAction {
+                emit<INITIALIZE>(std::make_unique<RegisterAction>(RegisterAction {
                     id,
                     "HeadController",
                     { std::pair<float, std::set<LimbID>>(30.0, { LimbID::HEAD }) },
