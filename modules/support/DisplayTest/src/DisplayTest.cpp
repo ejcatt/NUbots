@@ -40,9 +40,9 @@ namespace support {
 
         });*/
 
-        on<Trigger<Network<MotionCapture>>>().then([this](const Network<MotionCapture>& net) {
+        on<Network<MotionCapture>>().then([this](const Network<void>::Source& source, const MotionCapture& cap) {
 //            auto mocap = net.data;
-            NUClear::log("I got things from", net.sender);
+            //NUClear::log("I got things from", net.sender);
         });
 
         on<Trigger<Sensors>, Single, Priority::HIGH>().then([this](const Sensors& sensors) {

@@ -84,7 +84,7 @@ namespace skills {
             }
         });
 
-        on<Trigger<ExecuteKick>>().then([this] (const ExecuteKick&) {
+        on<Trigger<ExecuteKick>>().then([this] {
             auto direction = kickCommand.direction;
             auto leg = kickCommand.leg;
 
@@ -112,7 +112,7 @@ namespace skills {
 
         });
 
-        on<Trigger<FinishKick>>().then([this] (const FinishKick&) {
+        on<Trigger<FinishKick>>().then([this] {
             emit(std::move(std::make_unique<KickFinished>()));
             updatePriority(0);
         });
